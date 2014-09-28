@@ -11,7 +11,7 @@ body {
 /* machine sections */
 /* machine sections */
 /* machine sections */
-#machine, #drumgrid, #stepline {
+#machine, #padgrid, #stepline {
   border: 1px solid darkblue;
   background-color: white; }
 
@@ -22,17 +22,17 @@ body {
   margin: 60px auto;
   border-radius: 20px; }
 
-#drumgrid, #stepline {
+#padgrid, #stepline {
   position: absolute;
   left: 20px;
   border-radius: 5px; }
 
-#drumgrid {
+#padgrid {
   top: 20px;
   width: 285px;
   height: 285px; }
 
-#drumgrid button {
+#padgrid button {
   display: inline-block;
   width: 65px;
   height: 65px;
