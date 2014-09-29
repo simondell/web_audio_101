@@ -88,13 +88,83 @@ for( drum in drums ) { if( drums.hasOwnProperty( drum ) ){
 
 
 
+//
+// Sequencer
+//
+
+var sequence = [];
+var seqMaxLen = 16;
+var currentStep = 0;
+var nextTimer; 	// will hold the timeout id for the next step, so the sequencer can be stopped.
+var playing = false;
+var tempo = 120;
+var division = 4;	// as in 4 1/16th-notes per beat.
+
+sequence.push(['tambo', 'mtm', 'cowbl']);
+sequence.push([]);
+sequence.push(['tambo']);
+sequence.push([]);
+sequence.push(['tambo', 'clap']);
+sequence.push([]);
+sequence.push(['tambo', 'mtm']);
+sequence.push([]);
+sequence.push(['tambo']);
+sequence.push([]);
+sequence.push(['tambo', 'mtm']);
+sequence.push([]);
+sequence.push(['tambo', 'clap']);
+sequence.push([]);
+sequence.push(['tambo']);
+sequence.push(['rimsh']);
+
+console.log(sequence)
+
+function playStep ( stepIndex ) {
+	var hits = sequence[ stepIndex ];
+	var hitCount = hits.length;
+
+	currentStep = ++currentStep % seqMaxLen;
+
+	while( hitCount-- ) {
+		bang( drums[ hits[ hitCount ] ] );
+	}
+
+	if( playing ) {
+		nextTimer = setTimeout( playStep, interval, currentStep );
+	}
+}
+
+function toggleStartStop () {
+	if( playing ) {
+		playing = false;
+		cancelTimeout( nextTimer );
+	} else {
+		playing = true;
+		startSequence();
+	}
+}
+
+function startSequence () {
+	interval = (60 / (tempo * division)) * 1000;
+	playStep( currentStep );
+}
 
 
 //
 // Interface (event handling)
 // - this could probably become a kind of master object, or controller
+//
 
 var mousedown = false;
+
+function handleKeys ( event ) {
+console.log( event.which );
+	switch( event.which ) {
+	case 32:
+		toggleStartStop();
+		break;
+ 	}
+}
 
 function handlePadHit ( event ) {
 	event.preventDefault();
@@ -111,7 +181,7 @@ $(document).on('mousedown', function toggleMouseDownTrue () { mousedown = true; 
 $(document).on('mouseup', function toggleMouseDownFalse () { mousedown = false; } );
 
 // delegate drum pad taps to padgrid
-// $(document).on('keydown', handlePadHit );
+$(document).on('keydown', handleKeys );
 $('#padgrid').on('touchstart', 'button', handlePadHit );
 $('#padgrid').on('mousedown', 'button', handlePadHit );
 $('#padgrid').on('mouseenter', 'button', function ( event ) {
