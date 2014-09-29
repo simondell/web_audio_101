@@ -100,6 +100,7 @@ var playing = false;
 var tempo = 120;
 var division = 4;	// as in 4 1/16th-notes per beat.
 
+
 sequence.push(['tambo', 'mtm', 'cowbl']);
 sequence.push([]);
 sequence.push(['tambo']);
@@ -137,7 +138,7 @@ function playStep ( stepIndex ) {
 function toggleStartStop () {
 	if( playing ) {
 		playing = false;
-		cancelTimeout( nextTimer );
+		clearTimeout( nextTimer );
 	} else {
 		playing = true;
 		startSequence();
