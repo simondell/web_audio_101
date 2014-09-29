@@ -15,20 +15,42 @@
 // http://www.adequatelygood.com/JavaScript-Module-Pattern-In-Depth.html
 (function (window, $){
 
+
 // Fix up prefixing
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
-// app namespace
-var drumMachine = {}
-var dm = drumMachine;
 
 
+
+
+// **********************************************
 //
-// the "synth"
+// Helper objects
+//
+// **********************************************
+
+/**
+ * Evented
+ * adds event handling to objects, delegating to $
+ */
+function Evented () {}
+Evented.prototype = {
+	constructor: Evented,
+	on: function ( eventName, callback ) { $(this).on( eventName, callback ); return this; },
+	off: function ( eventName, callback ) { $(this).off( eventName, callback ); return this; },
+	trigger: function ( eventName, callback ) { $(this).trigger( eventName ); return this; }
+}
+
+
+
+
+// **********************************************
+//
+// The 'synth' section
 // drum sounds, channel to play them through, loader to load them etc
 //
+// **********************************************
 
-dm.synth = {}
 
 var context = new AudioContext();
 
@@ -65,7 +87,29 @@ function bang( drum ) {
 	source.start(0);                           // play the source now
 }
 
-dm.synth.bang = bang;
+
+
+
+/**
+ * @class Drum
+ * @extends Evented
+ * handles loading & decoding samples, and attaching to the audio graph
+ */
+function Drum ( path, context ) {
+	this.path = path;
+	this.context = context;
+}
+Drum.prototype = new Evented();
+Drum.prototype.constructor = Drum;
+Drum.prototype.bang = function bang () {
+	var node = this.context.createBufferSource();
+	node.buffer = this.buffer;
+	node.connect( this.context.destination );
+	node.start( 0 );
+}
+
+var snare = new Drum( 'assets/707/707CLAP.WAV', context )
+console.log( snare );
 
 
 // list sounds, then load and play them
@@ -78,8 +122,6 @@ var drums = {
 	'rimsh' : { grid: 6, path: 'assets/707/707RIMSH.WAV', buffer: undefined },
 	'tambo' : { grid: 7, path: 'assets/707/707TAMBO.WAV', buffer: undefined }
 };
-
-dm.synth.drums = drums;
 
 for( drum in drums ) { if( drums.hasOwnProperty( drum ) ){
 	loadSound( drums[drum].path );
@@ -169,7 +211,7 @@ function handlePadHit ( event ) {
 	event.preventDefault();
 	event.stopImmediatePropagation();
 	// event.stopPropagation();
-	dm.synth.bang( dm.synth.drums[ event.target.id ] );
+	bang( drums[ event.target.id ] );
 
 	// blur if clicked (but doesn't actually work)
 	if( /mouse/.test( event.type ) ) event.target.blur();
