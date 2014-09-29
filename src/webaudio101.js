@@ -100,7 +100,7 @@ function Drum ( path, context ) {
 
 			context.decodeAudioData( xhr.response, function(buffer) {
 				drum.buffer = buffer;
-				drum.bang();
+				// drum.bang();
 			});
 
 		};
@@ -125,20 +125,20 @@ Drum.prototype.bang = function bang () {
 
 // list sounds, then load and play them
 var drums = {
-	'clap'  : { grid: 1, path: 'assets/707/707CLAP.WAV', buffer: undefined },
-	'cowbl' : { grid: 2, path: 'assets/707/707COWBL.WAV', buffer: undefined },
-	'htm'   : { grid: 3, path: 'assets/707/707HTM.WAV', buffer: undefined },
-	'ltm'   : { grid: 4, path: 'assets/707/707LTM.WAV', buffer: undefined },
-	'mtm'   : { grid: 5, path: 'assets/707/707MTM.WAV', buffer: undefined },
-	'rimsh' : { grid: 6, path: 'assets/707/707RIMSH.WAV', buffer: undefined },
-	'tambo' : { grid: 7, path: 'assets/707/707TAMBO.WAV', buffer: undefined }
+	'clap'  : 'assets/707/707CLAP.WAV',
+	'cowbl' : 'assets/707/707COWBL.WAV',
+	'htm'   : 'assets/707/707HTM.WAV',
+	'ltm'   : 'assets/707/707LTM.WAV',
+	'mtm'   : 'assets/707/707MTM.WAV',
+	'rimsh' : 'assets/707/707RIMSH.WAV',
+	'tambo' : 'assets/707/707TAMBO.WAV'
 };
 
 var drumObjects = {};
 
 for( drum in drums ) { if( drums.hasOwnProperty( drum ) ){
 	// loadSound( drums[drum].path );
-	drumObjects[ drum ] = new Drum( drums[drum].path, context );
+	drumObjects[ drum ] = new Drum( drums[drum], context );
 }}
 
 
@@ -166,7 +166,7 @@ sequence.push(['tambo', 'mtm', 'cowbl']);
 sequence.push([]);
 sequence.push(['tambo']);
 sequence.push([]);
-sequence.push(['tambo', 'clap']);
+sequence.push(['tambo', 'clap', 'cowbl']);
 sequence.push([]);
 sequence.push(['tambo', 'mtm']);
 sequence.push([]);
@@ -221,9 +221,6 @@ function startSequence () {
 //
 // **********************************************
 
-var mousedown = false;
-var $pads;	// will be a $set of buttons for use as drum pads
-
 function handleKeys ( event ) {
 	switch( event.which ) {
 	case 32:
@@ -235,15 +232,20 @@ function handleKeys ( event ) {
 function handlePadHit ( event ) {
 	event.preventDefault();
 	event.stopImmediatePropagation();
-	// event.stopPropagation();
-	// bang( drums[ event.target.id ] );
+
+	toggleMouseDownTrue();
 	drumObjects[ event.target.id ].bang();
 
 	// blur if clicked (but doesn't actually work)
 	if( /mouse/.test( event.type ) ) event.target.blur();
 }
 
+var mousedown = false;
+function toggleMouseDownTrue () { mousedown = true; }
+function toggleMouseDownFalse () { mousedown = false; }
 
+
+var $pads;	// will be a $set of buttons for use as drum pads
 
 (function padController () {
 	var $document = $(document);
@@ -255,22 +257,21 @@ function handlePadHit ( event ) {
 	$pads.each( function setDrumEvents ( index, pad ){
 		var $pad = $(pad);
 		drumObjects[ pad.id ].on( 'bang', function onBang ( /*event*/ ){
-console.log('bangbang', pad.id );
 			$pad.addClass( 'struck' );
-			$pad.one( transitionEnd, function (){ console.log('end'); $pad.removeClass( 'struck' ); });
+			$pad.one( transitionEnd, function () { $pad.removeClass( 'struck' ); });
 		});
 	});
 
 	// toggle mousedown flag, used for dragging an 'active" mouse over machine controls
-	$document.on('mousedown', function toggleMouseDownTrue () { mousedown = true; } );
-	$document.on('mouseup', function toggleMouseDownFalse () { mousedown = false; } );
+	$document.on('mousedown', toggleMouseDownTrue );
+	$document.on('mouseup', toggleMouseDownFalse );
 
 	// delegate drum pad taps to padgrid
-	$padgrid.on('touchstart', 'button', handlePadHit );
-	$padgrid.on('mousedown', 'button', handlePadHit );
 	$padgrid.on('mouseenter', 'button', function ( event ) {
 		if( mousedown ) { handlePadHit( event ); }
 	});
+	$padgrid.on('mousedown', 'button', handlePadHit );
+	$padgrid.on('touchstart', 'button', handlePadHit );
 })();
 
 (function sequencerController () {
