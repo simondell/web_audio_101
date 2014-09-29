@@ -70,20 +70,19 @@ dm.synth.bang = bang;
 
 // list sounds, then load and play them
 var drums = {
-	'clap'  : { grid: 1, path: 'assets/707/707CLAP.WAV', buffer: undefined, source: context.createBufferSource() },
-	'cowbl' : { grid: 2, path: 'assets/707/707COWBL.WAV', buffer: undefined, source: context.createBufferSource() },
-	'htm'   : { grid: 3, path: 'assets/707/707HTM.WAV', buffer: undefined, source: context.createBufferSource() },
-	'ltm'   : { grid: 4, path: 'assets/707/707LTM.WAV', buffer: undefined, source: context.createBufferSource() },
-	'mtm'   : { grid: 5, path: 'assets/707/707MTM.WAV', buffer: undefined, source: context.createBufferSource() },
-	'rimsh' : { grid: 6, path: 'assets/707/707RIMSH.WAV', buffer: undefined, source: context.createBufferSource() },
-	'tambo' : { grid: 7, path: 'assets/707/707TAMBO.WAV', buffer: undefined, source: context.createBufferSource() }
+	'clap'  : { grid: 1, path: 'assets/707/707CLAP.WAV', buffer: undefined },
+	'cowbl' : { grid: 2, path: 'assets/707/707COWBL.WAV', buffer: undefined },
+	'htm'   : { grid: 3, path: 'assets/707/707HTM.WAV', buffer: undefined },
+	'ltm'   : { grid: 4, path: 'assets/707/707LTM.WAV', buffer: undefined },
+	'mtm'   : { grid: 5, path: 'assets/707/707MTM.WAV', buffer: undefined },
+	'rimsh' : { grid: 6, path: 'assets/707/707RIMSH.WAV', buffer: undefined },
+	'tambo' : { grid: 7, path: 'assets/707/707TAMBO.WAV', buffer: undefined }
 };
 
 dm.synth.drums = drums;
 
 for( drum in drums ) { if( drums.hasOwnProperty( drum ) ){
-	drums[drum].source.connect(context.destination);
-	loadSound( drums[drum].path, function onloadHandler () { console.log('onload', arguments); } );
+	loadSound( drums[drum].path );
 }}
 
 
@@ -159,7 +158,6 @@ function startSequence () {
 var mousedown = false;
 
 function handleKeys ( event ) {
-console.log( event.which );
 	switch( event.which ) {
 	case 32:
 		toggleStartStop();
