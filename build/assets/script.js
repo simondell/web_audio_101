@@ -45,13 +45,13 @@ function playSound(buffer) {
 
 // list sounds, then load and play them
 var drums = {
-	'clap'  : { grid: 1, path: 'assets/707/707CLAP.WAV', buffer: {} },
-	'cowbl' : { grid: 2, path: 'assets/707/707COWBL.WAV', buffer: {} },
-	'htm'   : { grid: 3, path: 'assets/707/707HTM.WAV', buffer: {} },
-	'ltm'   : { grid: 4, path: 'assets/707/707LTM.WAV', buffer: {} },
-	'mtm'   : { grid: 5, path: 'assets/707/707MTM.WAV', buffer: {} },
-	'rimsh' : { grid: 6, path: 'assets/707/707RIMSH.WAV', buffer: {} },
-	'tambo' : { grid: 7, path: 'assets/707/707TAMBO.WAV', buffer: {} }
+	'clap'  : { grid: 1, path: '707/707CLAP.WAV', buffer: {} },
+	'cowbl' : { grid: 2, path: '707/707COWBL.WAV', buffer: {} },
+	'htm'   : { grid: 3, path: '707/707HTM.WAV', buffer: {} },
+	'ltm'   : { grid: 4, path: '707/707LTM.WAV', buffer: {} },
+	'mtm'   : { grid: 5, path: '707/707MTM.WAV', buffer: {} },
+	'rimsh' : { grid: 6, path: '707/707RIMSH.WAV', buffer: {} },
+	'tambo' : { grid: 7, path: '707/707TAMBO.WAV', buffer: {} }
 };
 
 var drumButtonTemplate = '<button type="button" id="{{ID}}">{{ID}}</button>'
