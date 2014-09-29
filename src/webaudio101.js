@@ -1,18 +1,5 @@
 // Web Audio 101
-// An experiment borrowing heavily from hTML5Rocks
-// http://www.html5rocks.com/en/tutorials/webaudio/intro/
-//
-// A drum-machine with basic sequencer to get a feel for launching and
-//  mixing sounds, stringing them together in time, building an app rather than
-//  a document (because I usually make documents for my day-job, even when they're made
-//  like a SPA). Potentially, this project could be used to learn about FRP, as well,
-//  as the interface is crying out for better code aesthestics, but this is for a
-//  later stage.
 
-
-// Avoid the app adding globals with an IIFE
-// http://benalman.com/news/2010/11/immediately-invoked-function-expression/
-// http://www.adequatelygood.com/JavaScript-Module-Pattern-In-Depth.html
 (function (window, $){
 
 
@@ -129,19 +116,25 @@ for( drum in drums ) { if( drums.hasOwnProperty( drum ) ){
 
 
 
+
+// **********************************************
 //
-// Sequencer
+// The 'sequencer' section
+// Data structures for the sequence, a default sequence, functions for playback
 //
+// **********************************************
 
 var sequence = [];
 var seqMaxLen = 16;
 var currentStep = 0;
 var nextTimer; 	// will hold the timeout id for the next step, so the sequencer can be stopped.
 var playing = false;
-var tempo = 120;
+var tempo = 100;
 var division = 4;	// as in 4 1/16th-notes per beat.
 
 
+// a default sequence
+//
 sequence.push(['tambo', 'mtm', 'cowbl']);
 sequence.push([]);
 sequence.push(['tambo']);
@@ -159,7 +152,6 @@ sequence.push([]);
 sequence.push(['tambo']);
 sequence.push(['rimsh']);
 
-console.log(sequence)
 
 function playStep ( stepIndex ) {
 	var hits = sequence[ stepIndex ];
