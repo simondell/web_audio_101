@@ -25,3 +25,8 @@ http://localhost:8080 or http://<your_ip>:8080
 
 1. zepto.Js is used for its selector engine and event binding.
 
+
+
+## Licence
+
+The application code is covered by the CC0 1.0 Universal licence. The 3rd party modules (Zepto, Gulp and associated plugins) are all covered by their own licence arrangements. The sound samples are not public domain and potentially infringe some copyright - I don't actually know because I didn't make them and probably downloaded them from a newsgroup in 1998.

@@ -6,6 +6,7 @@
 // Fix up prefixing
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
+var transitionEnd = 'webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend';
 
 
 
@@ -83,20 +84,43 @@ function bang( drum ) {
  * handles loading & decoding samples, and attaching to the audio graph
  */
 function Drum ( path, context ) {
+	var drum = this;
 	this.path = path;
 	this.context = context;
+	this.name = /(?:\/707)(\w+)(?:\.)/i.exec( path )[1].toLowerCase();
+
+	(function loadSound() {
+		var request = new XMLHttpRequest();
+		request.responseType = 'arraybuffer';
+
+		// Decode asynchronously
+		request.onload = function handleLoadSound ( event ) {
+			if( event.type !== 'load' ) return;
+			var xhr = event.target;
+
+			context.decodeAudioData( xhr.response, function(buffer) {
+				drum.buffer = buffer;
+				drum.bang();
+			});
+
+		};
+
+		request.open('GET', path, true);
+		request.send();
+	})();
 }
+
 Drum.prototype = new Evented();
 Drum.prototype.constructor = Drum;
+
 Drum.prototype.bang = function bang () {
 	var node = this.context.createBufferSource();
 	node.buffer = this.buffer;
 	node.connect( this.context.destination );
 	node.start( 0 );
-}
 
-var snare = new Drum( 'assets/707/707CLAP.WAV', context )
-console.log( snare );
+	this.trigger('bang');
+}
 
 
 // list sounds, then load and play them
@@ -110,8 +134,11 @@ var drums = {
 	'tambo' : { grid: 7, path: 'assets/707/707TAMBO.WAV', buffer: undefined }
 };
 
+var drumObjects = {};
+
 for( drum in drums ) { if( drums.hasOwnProperty( drum ) ){
-	loadSound( drums[drum].path );
+	// loadSound( drums[drum].path );
+	drumObjects[ drum ] = new Drum( drums[drum].path, context );
 }}
 
 
@@ -129,9 +156,9 @@ var seqMaxLen = 16;
 var currentStep = 0;
 var nextTimer; 	// will hold the timeout id for the next step, so the sequencer can be stopped.
 var playing = false;
-var tempo = 100;
+var tempo = 107;
 var division = 4;	// as in 4 1/16th-notes per beat.
-
+var currentDrum;
 
 // a default sequence
 //
@@ -144,9 +171,9 @@ sequence.push([]);
 sequence.push(['tambo', 'mtm']);
 sequence.push([]);
 sequence.push(['tambo']);
-sequence.push([]);
+sequence.push(['ltm']);
 sequence.push(['tambo', 'mtm']);
-sequence.push([]);
+sequence.push(['tambo']);
 sequence.push(['tambo', 'clap']);
 sequence.push([]);
 sequence.push(['tambo']);
@@ -160,7 +187,8 @@ function playStep ( stepIndex ) {
 	currentStep = ++currentStep % seqMaxLen;
 
 	while( hitCount-- ) {
-		bang( drums[ hits[ hitCount ] ] );
+		// bang( drums[ hits[ hitCount ] ] );
+		drumObjects[ hits[ hitCount ] ].bang();
 	}
 
 	if( playing ) {
@@ -185,12 +213,17 @@ function startSequence () {
 }
 
 
+
+
+// **********************************************
 //
 // Interface (event handling)
 // - this could probably become a kind of master object, or controller
 //
+// **********************************************
 
 var mousedown = false;
+var $pads;	// will be a $set of buttons for use as drum pads
 
 function handleKeys ( event ) {
 	switch( event.which ) {
@@ -204,23 +237,49 @@ function handlePadHit ( event ) {
 	event.preventDefault();
 	event.stopImmediatePropagation();
 	// event.stopPropagation();
-	bang( drums[ event.target.id ] );
+	// bang( drums[ event.target.id ] );
+	drumObjects[ event.target.id ].bang();
 
 	// blur if clicked (but doesn't actually work)
 	if( /mouse/.test( event.type ) ) event.target.blur();
 }
 
-// toggle mousedown flag, used for dragging an 'active" mouse over machine controls
-$(document).on('mousedown', function toggleMouseDownTrue () { mousedown = true; } );
-$(document).on('mouseup', function toggleMouseDownFalse () { mousedown = false; } );
 
-// delegate drum pad taps to padgrid
-$(document).on('keydown', handleKeys );
-$('#padgrid').on('touchstart', 'button', handlePadHit );
-$('#padgrid').on('mousedown', 'button', handlePadHit );
-$('#padgrid').on('mouseenter', 'button', function ( event ) {
-	if( mousedown ) { handlePadHit( event ); }
-});
+
+(function padController () {
+	var $document = $(document);
+	var $padgrid = $('#padgrid');
+	$pads = $padgrid.find('button');
+
+	// Each pad 'listens' to its associated drum for 'bang' events
+	//  and flashes when it hears one.
+	$pads.each( function setDrumEvents ( index, pad ){
+		var $pad = $(pad);
+		drumObjects[ pad.id ].on( 'bang', function onBang ( /*event*/ ){
+console.log('bangbang', pad.id );
+			$pad.addClass( 'struck' );
+			$pad.one( transitionEnd, function (){ console.log('end'); $pad.removeClass( 'struck' ); });
+		});
+	});
+
+	// toggle mousedown flag, used for dragging an 'active" mouse over machine controls
+	$document.on('mousedown', function toggleMouseDownTrue () { mousedown = true; } );
+	$document.on('mouseup', function toggleMouseDownFalse () { mousedown = false; } );
+
+	// delegate drum pad taps to padgrid
+	$padgrid.on('touchstart', 'button', handlePadHit );
+	$padgrid.on('mousedown', 'button', handlePadHit );
+	$padgrid.on('mouseenter', 'button', function ( event ) {
+		if( mousedown ) { handlePadHit( event ); }
+	});
+})();
+
+(function sequencerController () {
+	$(document).on('keydown', handleKeys );
+
+})();
+
+
 
 
 }(window, $));

@@ -40,16 +40,21 @@ body {
 	top: 20px;
 	width: 285px;
 	height: 285px;
-}
 
-	#padgrid button {
+	button {
 		display: inline-block;
 		width: 65px;
 		height: 65px;
 		margin: 5px 0 0 5px;
-		border: 1px solid darkblue;
+		border: 1px solid darkgrey;
 		background-color: darkgrey;
+
+		transition: background-color 70ms ease-in;
+
+		&.struck { background-color: red; }
 	}
+}
+
 
 
 #stepline {
