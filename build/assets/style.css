@@ -2,25 +2,27 @@ main, header, footer, nav, aside, section {
   display: block; }
 
 html {
+  font-size: 16px;
+  line-height: 20px;
   background-color: #eee; }
 
 body {
   width: 960px;
-  margin: 0 auto; }
+  margin: 0 auto;
+  font-family: Impact; }
 
+/* colours */
 /* machine sections */
-/* machine sections */
-/* machine sections */
-#machine, #padgrid, #stepline {
-  border: 1px solid darkblue;
+.eightiesOutline, #machine, #padgrid, #stepline {
+  border: 1px solid darkgrey;
+  border-radius: 5px;
   background-color: white; }
 
 #machine {
   position: relative;
   width: 626px;
   height: 440px;
-  margin: 60px auto;
-  border-radius: 5px; }
+  margin: 60px auto; }
 
 #padgrid, #stepline {
   position: absolute;
@@ -36,7 +38,7 @@ body {
     width: 65px;
     height: 65px;
     margin: 5px 0 0 5px;
-    border: 1px solid darkgrey;
+    border: 1px solid #555;
     background-color: darkgrey; }
 
 #stepline {
@@ -69,8 +71,8 @@ body {
   height: 72px;
   line-height: 72px;
   background-color: white;
-  color: black;
-  border: 1px solid black;
+  color: #555;
+  border: 1px solid #555;
   border-radius: 5px 5px 0 0; }
 
 #stepline .led {
@@ -78,7 +80,7 @@ body {
   width: 16px;
   height: 8px;
   margin: 10px auto;
-  border: 1px solid black;
+  border: 1px solid #555;
   vertical-align: top; }
 
 #stepline .led-on {
@@ -86,10 +88,14 @@ body {
 
 #stepline label {
   height: 16px;
+  line-height: 16px;
   bottom: 0;
-  background-color: black;
+  background-color: #555;
   color: white;
-  border-radius: 0 0 5px 5px; }
+  border-radius: 0 0 5px 5px;
+  font-size: 0.8rem;
+  font-weight: 100;
+  vertical-align: top; }
 
 .flash {
   transition: background-color 70ms ease-in; }
