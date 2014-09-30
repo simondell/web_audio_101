@@ -35,10 +35,12 @@ Evented.prototype = {
 // **********************************************
 //
 // The 'synth' section
-// drum sounds, channel to play them through, loader to load them etc
+// Drum sounds
+// (The loader is now part of the Drum object, and the context/channel to play
+//  through is defined below in the 'bootstrap' section because that stuff is more
+//  like app code or a main(). Other sound manipulation code may appear here later)
 //
 // **********************************************
-
 
 
 /**
@@ -166,13 +168,14 @@ Sequencer.prototype.setStep = function setStep ( stepId, drum ) {
 var drumObjects = {};
 var sequencer = new Sequencer();
 var context = new AudioContext();
+var previousDrum = null;
 
 // cached $(elements)
 var $document = $(document);
-var $stepline = $('#stepline');
 var $padgrid = $('#padgrid');
 var $pads = $padgrid.find('button');
-
+var $stepline = $('#stepline');
+var $stepButtons = $stepline.find('button');
 
 // app-level flags
 var mousedown = false;
@@ -249,22 +252,36 @@ function handleKeys ( event ) {
  	}
 }
 
+
 function handlePadHit ( event ) {
 	event.preventDefault();
 	event.stopImmediatePropagation();
 
-	toggleMouseDownTrue();
 	drumObjects[ event.target.id ].bang();
 
+	if( !previousDrum || previousDrum.name !== event.target.id ) {
+		previousDrum = drumObjects[ event.target.id ];
+	}
+
+	showDrumSteps();
+
 	// blur if clicked (but doesn't actually work)
-	if( /mouse/.test( event.type ) ) event.target.blur();
+	if( /mouse/.test( event.type ) ) {
+		toggleMouseDownTrue();
+		event.target.blur();
+	}
 }
 
+
 function handleStep ( event, stepId ) {
-	var stepButton = $stepline.find('button').eq( stepId );
+	var stepButton = $stepButtons.eq( stepId );
 	flash( stepButton.find('span'), 'orange' );
 }
 
+
+// helper functions
+// (usually called within a handler, but sometimes called AS a handler)
+//
 function flash ( elem, colour ) {
 	var $elem = $( elem );
 	var flashClass = 'flash--' + colour;
@@ -272,9 +289,37 @@ function flash ( elem, colour ) {
 	$elem.one( transitionEnd, function () { $elem.removeClass( flashClass ); });
 }
 
+
 function toggleMouseDownTrue () { mousedown = true; }
 
+
 function toggleMouseDownFalse () { mousedown = false; }
+
+
+function showDrumSteps () {
+	var drumSteps = sequencer.sequence.reduce( filterForLastDrum, [] );
+
+	$stepButtons.each( function turnOffLED ( index, button ) {
+		if( drumSteps[0] === index ) {
+			$(button).find('.led').toggleClass('led-on', true );
+			drumSteps.shift();
+		} else {
+			$(button).find('.led').toggleClass('led-on', false );
+		}
+	});
+}
+
+// callback for [].filter which
+function filterForLastDrum ( accum, currentStepDrums, index ) {
+	// current === stepDrums i.e. an array of drums at step[ index ]
+	if( currentStepDrums.some( findDrum ) ) accum.push( index );
+	return accum;
+}
+
+// callback for [].some, returning true if the passed-in drum matches previousDrum
+function findDrum ( inspected ) {
+	return inspected.name === previousDrum.name;
+}
 
 
 //
@@ -304,14 +349,12 @@ function toggleMouseDownFalse () { mousedown = false; }
 	$padgrid.on('touchstart', 'button', handlePadHit );
 })();
 
+
 (function sequencerController () {
 	$(document).on('keydown', handleKeys );
 
 	sequencer.on('playStep', handleStep );
 })();
-
-
-
 
 
 }(window, $));
