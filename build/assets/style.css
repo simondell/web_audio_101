@@ -20,7 +20,7 @@ body {
   width: 626px;
   height: 440px;
   margin: 60px auto;
-  border-radius: 20px; }
+  border-radius: 5px; }
 
 #padgrid, #stepline {
   position: absolute;
@@ -37,10 +37,7 @@ body {
     height: 65px;
     margin: 5px 0 0 5px;
     border: 1px solid darkgrey;
-    background-color: darkgrey;
-    transition: background-color 70ms ease-in; }
-    #padgrid button.struck {
-      background-color: red; }
+    background-color: darkgrey; }
 
 #stepline {
   position: absolute;
@@ -93,3 +90,12 @@ body {
   background-color: black;
   color: white;
   border-radius: 0 0 5px 5px; }
+
+.flash {
+  transition: background-color 70ms ease-in; }
+
+.flash--red {
+  background-color: red !important; }
+
+.flash--orange {
+  background-color: orange !important; }

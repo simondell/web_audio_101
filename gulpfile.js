@@ -73,6 +73,7 @@ gulp.task( 'server', ['build'], function (){
 gulp.task('watch', function() {
  gulp.watch( markup, ['html']);
  gulp.watch( js, ['app']);
+ gulp.watch( vendor, ['vendor']);
  gulp.watch( scss, ['styles']);
 });
 
