@@ -169,7 +169,7 @@ var context = new AudioContext();
 
 // cached $(elements)
 var $document = $(document);
-var $stepline = $('#stepline')
+var $stepline = $('#stepline');
 var $padgrid = $('#padgrid');
 var $pads = $padgrid.find('button');
 
@@ -307,7 +307,7 @@ function toggleMouseDownFalse () { mousedown = false; }
 (function sequencerController () {
 	$(document).on('keydown', handleKeys );
 
-	sequencer.on('playStep', handleStep )
+	sequencer.on('playStep', handleStep );
 })();
 
 
