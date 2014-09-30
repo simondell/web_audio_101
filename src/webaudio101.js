@@ -42,7 +42,7 @@ Evented.prototype = {
 
 
 /**
- * @class Drum
+ * @type Drum
  * @extends Evented
  * handles loading & decoding samples, and attaching to the audio graph
  */
@@ -94,6 +94,11 @@ Drum.prototype.bang = function bang () {
 //
 // **********************************************
 
+/**
+ * @type Sequencer
+ * @extends Evented
+ * handles the sequence
+ */
 function Sequencer () {
 	this.sequence = [];
 	this.seqMaxLen = 16;
@@ -157,15 +162,25 @@ Sequencer.prototype.setStep = function setStep ( stepId, drum ) {
 //
 // **********************************************
 
+// app-level objects, collections etc
 var drumObjects = {};
 var sequencer = new Sequencer();
 var context = new AudioContext();
 
+// cached $(elements)
 var $document = $(document);
 var $stepline = $('#stepline')
 var $padgrid = $('#padgrid');
+var $pads = $padgrid.find('button');
 
 
+// app-level flags
+var mousedown = false;
+
+// Set up the app.
+// This didn't need to be within an IIFE: plain old imperative code would have worked.
+// The wrapping in an IIFE hints at how the code could be modularised later. The same applies to the
+//  'controller' functions, further down the file.
 (function bootstrap () {
 	var defaultSequence = [];
 	defaultSequence.push(['tambo', 'mtm', 'cowbl']);
@@ -222,6 +237,9 @@ var $padgrid = $('#padgrid');
 //
 // **********************************************
 
+
+// event handlers
+//
 function handleKeys ( event ) {
 	switch( event.which ) {
 	case 32:
@@ -254,17 +272,17 @@ function flash ( elem, colour ) {
 	$elem.one( transitionEnd, function () { $elem.removeClass( flashClass ); });
 }
 
-
-var mousedown = false;
 function toggleMouseDownTrue () { mousedown = true; }
+
 function toggleMouseDownFalse () { mousedown = false; }
 
 
-var $pads;	// will be a $set of buttons for use as drum pads
+//
+// 'controllers'
+//
 
+// sets up bindings between the 'drum pad' buttons and the drums and sequencer
 (function padController () {
-	$pads = $padgrid.find('button');
-
 	// Each pad 'listens' to its associated drum for 'bang' events
 	//  and flashes when it hears one.
 	$pads.each( function setDrumEvents ( index, pad ){
