@@ -97,7 +97,7 @@ body {
   font-weight: 100;
   vertical-align: top; }
 
-.flash {
+.flash, #padgrid button, #stepline .led {
   transition: background-color 70ms ease-in; }
 
 .flash--red {

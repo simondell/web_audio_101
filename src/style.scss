@@ -53,6 +53,7 @@ $veryDarkGrey: #555;
 		margin: 5px 0 0 5px;
 		border: 1px solid $veryDarkGrey;
 		background-color: darkgrey;
+		@extend .flash;
 	}
 }
 
@@ -105,6 +106,7 @@ $veryDarkGrey: #555;
 			margin: 10px auto;
 			border: 1px solid $veryDarkGrey;
 			vertical-align: top;
+			@extend .flash;
 		}
 
 		#stepline .led-on {
