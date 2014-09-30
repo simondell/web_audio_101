@@ -27,7 +27,7 @@ Evented.prototype = {
 	on: function ( eventName, callback ) { $(this).on( eventName, callback ); return this; },
 	off: function ( eventName, callback ) { $(this).off( eventName, callback ); return this; },
 	trigger: function ( eventName, callback ) { $(this).trigger( eventName ); return this; }
-}
+};
 
 
 
@@ -120,26 +120,7 @@ Drum.prototype.bang = function bang () {
 	node.start( 0 );
 
 	this.trigger('bang');
-}
-
-
-// list sounds, then load and play them
-var drums = {
-	'clap'  : 'assets/707/707CLAP.WAV',
-	'cowbl' : 'assets/707/707COWBL.WAV',
-	'htm'   : 'assets/707/707HTM.WAV',
-	'ltm'   : 'assets/707/707LTM.WAV',
-	'mtm'   : 'assets/707/707MTM.WAV',
-	'rimsh' : 'assets/707/707RIMSH.WAV',
-	'tambo' : 'assets/707/707TAMBO.WAV'
 };
-
-var drumObjects = {};
-
-for( drum in drums ) { if( drums.hasOwnProperty( drum ) ){
-	// loadSound( drums[drum].path );
-	drumObjects[ drum ] = new Drum( drums[drum], context );
-}}
 
 
 
@@ -180,6 +161,9 @@ sequence.push(['tambo']);
 sequence.push(['rimsh']);
 
 
+
+
+
 function playStep ( stepIndex ) {
 	var hits = sequence[ stepIndex ];
 	var hitCount = hits.length;
@@ -212,6 +196,117 @@ function startSequence () {
 }
 
 
+function Sequencer () {
+	this.sequence = [];
+	this.seqMaxLen = 16;
+	this.currentStep = 0;
+	this.nextTimer = null; 	// will hold the timeout id for the next step, so the sequencer can be stopped.
+	this.playing = false;
+	this.tempo = 107;
+	this.division = 4;	// as in 4 1/16th-notes per beat.
+
+	var count = seqMaxLen;
+	while( count-- ) this.sequence.push( [] );
+}
+
+Sequencer.prototype = new Evented();
+Sequencer.prototype.constructor = Sequencer;
+
+Sequencer.prototype.start = function start () {
+	this.playing = true;
+	this.interval = (60 / (this.tempo * this.division)) * 1000;
+	this.playStep();
+};
+
+Sequencer.prototype.stop = function stop () {
+	this.playing = false;
+	clearTimeout( this.nextTimer );
+};
+
+Sequencer.prototype.playStep = function playStep () {
+	var seqr = this;
+	var stepDrums = this.sequence[ this.currentStep ];
+	var drumCount = stepDrums.length;
+
+	this.currentStep = ++this.currentStep % this.seqMaxLen;
+
+	while( drumCount-- ) {
+		stepDrums[ drumCount ].bang();
+	}
+
+	if( this.playing ) {
+		this.nextTimer = setTimeout( $.proxy( seqr.playStep, seqr ), seqr.interval );
+	}
+};
+
+Sequencer.prototype.setStep = function setStep ( stepId, drum ) {
+	var step = this.sequence[ stepId ];
+	var drumPosition = $.inArray( drum, step );
+
+	// if the drum is already in the step array, remove it
+	if( drumPosition > -1 ) {	step.splice( drumPosition, 1 ); }
+	// otherwise, add it
+	else if( drum ) step.push( drum );
+};
+
+
+
+// **********************************************
+//
+// bootstrap - start the app
+//
+// **********************************************
+
+var drumObjects = {};
+var sequencer = new Sequencer();
+
+(function bootstrap () {
+	var defaultSequence = [];
+	defaultSequence.push(['tambo', 'mtm', 'cowbl']);
+	defaultSequence.push([]);
+	defaultSequence.push(['tambo']);
+	defaultSequence.push([]);
+	defaultSequence.push(['tambo', 'clap', 'cowbl']);
+	defaultSequence.push([]);
+	defaultSequence.push(['tambo', 'mtm']);
+	defaultSequence.push([]);
+	defaultSequence.push(['tambo']);
+	defaultSequence.push(['ltm']);
+	defaultSequence.push(['tambo', 'mtm']);
+	defaultSequence.push(['tambo']);
+	defaultSequence.push(['tambo', 'clap']);
+	defaultSequence.push([]);
+	defaultSequence.push(['tambo']);
+	defaultSequence.push(['rimsh']);
+
+
+	// list sounds, then load and play them
+	var drums = {
+		'clap'  : 'assets/707/707CLAP.WAV',
+		'cowbl' : 'assets/707/707COWBL.WAV',
+		'htm'   : 'assets/707/707HTM.WAV',
+		'ltm'   : 'assets/707/707LTM.WAV',
+		'mtm'   : 'assets/707/707MTM.WAV',
+		'rimsh' : 'assets/707/707RIMSH.WAV',
+		'tambo' : 'assets/707/707TAMBO.WAV'
+	};
+
+	// set up the Drum objects in the drum collection
+	for( var drum in drums ) { if( drums.hasOwnProperty( drum ) ){
+		// loadSound( drums[drum].path );
+		drumObjects[ drum ] = new Drum( drums[drum], context );
+	}}
+
+
+	// 'load' the default sequence into the sequencer
+	defaultSequence.forEach( function ( step, index ) {
+		step.forEach( function ( stepDrum ) {
+			sequencer.setStep( index, drumObjects[ stepDrum ] );
+		});
+	});
+
+})();
+
 
 
 // **********************************************
@@ -224,7 +319,8 @@ function startSequence () {
 function handleKeys ( event ) {
 	switch( event.which ) {
 	case 32:
-		toggleStartStop();
+		if( sequencer.playing ) sequencer.stop();
+		else sequencer.start();
 		break;
  	}
 }
@@ -278,6 +374,7 @@ var $pads;	// will be a $set of buttons for use as drum pads
 	$(document).on('keydown', handleKeys );
 
 })();
+
 
 
 
