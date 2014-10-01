@@ -254,9 +254,7 @@ function handleKeys ( event ) {
 
 
 function handlePadHit ( event ) {
-	event.preventDefault();
-	event.stopImmediatePropagation();
-
+	nix( event );
 	drumObjects[ event.target.id ].bang();
 
 	if( !previousDrum || previousDrum.name !== event.target.id ) {
@@ -268,8 +266,8 @@ function handlePadHit ( event ) {
 	// blur if clicked (but doesn't actually work)
 	if( /mouse/.test( event.type ) ) {
 		toggleMouseDownTrue();
-		event.target.blur();
 	}
+
 }
 
 
@@ -279,9 +277,25 @@ function handleStep ( event, stepId ) {
 }
 
 
+function handleStepTap () {
+	var stepId = parseInt( this.id.substr(4), 10 );
+	nix( event );
+	if( !previousDrum ) return;
+	sequencer.setStep( stepId, previousDrum );
+	showDrumSteps();
+}
+
+
 // helper functions
 // (usually called within a handler, but sometimes called AS a handler)
 //
+function nix ( event ) {
+	event.preventDefault();
+	event.stopImmediatePropagation();
+	event.target.blur();
+}
+
+
 function flash ( elem, colour ) {
 	var $elem = $( elem );
 	var flashClass = 'flash--' + colour;
@@ -345,13 +359,13 @@ function findDrum ( inspected ) {
 	$padgrid.on('mouseenter', 'button', function ( event ) {
 		if( mousedown ) { handlePadHit( event ); }
 	});
-	$padgrid.on('mousedown', 'button', handlePadHit );
-	$padgrid.on('touchstart', 'button', handlePadHit );
+	$padgrid.on('mousedown touchstart', 'button', handlePadHit );
 })();
 
 
 (function sequencerController () {
 	$(document).on('keydown', handleKeys );
+	$stepline.on('mousedown touchstart', 'button', handleStepTap );
 
 	sequencer.on('playStep', handleStep );
 })();
