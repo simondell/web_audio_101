@@ -4,6 +4,7 @@
 <head>
 	<meta charset="UTF-8" />
 	<title>Web Audio 101</title>
+	<meta name="viewport" content="width=720" />
 	<link rel="stylesheet" href="assets/scss/font-awesome.css" />
 	<link rel="stylesheet" href="assets/scss/style.css" />
 </head>
@@ -12,7 +13,10 @@
 
 
 		<main id="machine">
-			<h1>WA-101</h1>
+			<header>
+				<h1>WA-101</h1>
+				<p>Web audio drum composer</p>
+			</header>
 
 			<section id="padgrid">
 				<button type="button" id="clap"></button
@@ -21,15 +25,29 @@
 				><button type="button" id="ltm"></button
 				><button type="button" id="mtm"></button
 				><button type="button" id="rimsh"></button
+				><button type="button" id="crash"></button
+				><button type="button" id="glass"></button
+				><button type="button" id="pop"></button
+				><button type="button" id="ride"></button
+				><button type="button" id="scratch"></button
+				><button type="button" id="sfx1"></button
+				><button type="button" id="kick"></button
+				><button type="button" id="snare"></button
+				><button type="button" id="sfx2"></button
 				><button type="button" id="tambo"></button>
 			</section>
 
 			<section id="sequencer--controls">
-				<div id="tempoCtrl"><span id="notch"></span></div>
-				<div id="tempo"></div>
-				<button type="button" id="rwnd" class="fa fa-2x fa-fast-backward"></button
-				><button type="button" id="play" class="fa fa-2x fa-play"></button
-				><button type="button" id="stop" class="fa fa-2x fa-stop"></button>
+				<div class="sequencer--controls__group">
+					<div id="tempoCtrlWrapper"><span id="tempoCtrl"><span id="notch"></span></span></div>
+					<div id="tempo"></div>
+				</div>
+
+				<div class="sequencer--controls__group">
+					<button type="button" id="rwnd" class="fa fa-2x fa-fast-backward"></button
+					><button type="button" id="play" class="fa fa-2x fa-play"></button
+					><button type="button" id="stop" class="fa fa-2x fa-stop"></button>
+				</div>
 			</section>
 
 			<section id="stepline">

@@ -8,24 +8,31 @@ html {
   background-color: #eee; }
 
 body {
-  width: 960px;
+  width: 720px;
   margin: 0 auto;
   font-family: Impact, "HelveticaNeue-CondensedBlack";
   font-weight: bold; }
 
-h1 {
+header {
   position: absolute;
   top: 20px;
   right: 20px;
   width: 278px;
+  text-align: right; }
+  header p {
+    margin-top: 5px;
+    font-family: 'HelveticaNeue', Ariel, sans-serif;
+    font-size: 16px;
+    color: grey; }
+
+h1 {
   padding: 0 0 5px;
   margin: 0;
   border-bottom: 1px solid #555;
   font-size: 40px;
   line-height: 40px;
   letter-spacing: 2px;
-  font-style: italic;
-  text-align: right; }
+  font-style: italic; }
 
 input, button {
   -webkit-appearance: none;
@@ -41,7 +48,8 @@ input, button {
   position: relative;
   width: 626px;
   height: 440px;
-  margin: 60px auto; }
+  margin: 10px auto;
+  box-shadow: 2px 2px 8px 2px darkgrey; }
 
 #padgrid, #stepline {
   position: absolute;
@@ -53,19 +61,24 @@ input, button {
   width: 285px;
   height: 285px; }
   #padgrid button {
-    display: inline-block;
-    width: 65px;
-    height: 65px;
+    float: left;
+    width: 64px;
+    height: 64px;
     margin: 5px 0 0 5px;
-    border: 1px solid #555;
-    background-color: darkgrey; }
+    border-color: #555;
+    border-style: solid;
+    border-width: 0;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    background-color: darkgrey;
+    box-shadow: 0px 2px 3px -1px #555; }
     #padgrid button.previous {
-      background-color: green; }
+      background-color: limegreen; }
 
 #sequencer--controls {
   position: absolute;
   right: 23px;
-  bottom: 128px;
+  bottom: 137px;
   width: 278px;
   padding: 5px 0;
   text-align: right; }
@@ -73,40 +86,80 @@ input, button {
     vertical-align: middle; }
   #sequencer--controls > * {
     margin-left: 10px; }
+  #sequencer--controls .sequencer--controls__group {
+    display: block;
+    margin-top: 10px;
+    height: 40px;
+    line-height: 40px; }
   #sequencer--controls button {
-    height: 50px;
+    height: 40px;
     width: 50px;
-    border-width: 1px;
+    margin-left: 15px;
+    border-top-width: 0px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 0px;
     border-style: solid;
-    border-radius: 5px; }
+    border-radius: 2px; }
+
+#tempoCtrlWrapper {
+  position: relative;
+  display: inline-block;
+  width: 31px;
+  height: 31px;
+  border: 1px solid #555;
+  border-radius: 50%;
+  box-shadow: 2px 2px 4px 1px #555; }
+
+#tempoCtrl {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 31px;
+  height: 31px;
+  border-radius: 50%; }
+
+#notch {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 16px;
+  background-color: #555;
+  box-shadow: 1px 1px 1px grey; }
 
 #tempo {
   display: inline-block;
   width: 60px;
-  height: 50px;
+  height: 40px;
   padding: 0 5px;
+  margin-left: 15px;
   font-family: monospace;
   font-size: 36px;
   text-align: center;
   letter-spacing: -2px;
-  line-height: 50px;
+  line-height: 40px;
   background-color: black;
-  color: green; }
+  color: limegreen;
+  text-shadow: 0px 0px 5px rgba(202, 251, 202, 0.7); }
 
 #rwnd {
-  border-color: darkorange;
+  border-color: brown;
   background-color: darkorange;
-  color: #555; }
+  color: #555;
+  box-shadow: 0px 2px 3px -1px darkorange; }
 
 #play {
-  border-color: darkgreen;
-  background-color: darkgreen;
-  color: white; }
+  border-color: green;
+  background-color: limegreen;
+  color: white;
+  box-shadow: 0px 2px 3px -1px limegreen; }
 
 #stop {
   border-color: darkred;
-  background-color: darkred;
-  color: white; }
+  background-color: firebrick;
+  color: white;
+  box-shadow: 0px 2px 3px -1px firebrick; }
 
 #stepline {
   position: absolute;
@@ -135,12 +188,16 @@ input, button {
 
 #stepline button {
   box-sizing: border-box;
-  height: 72px;
+  height: 70px;
   line-height: 72px;
   background-color: white;
   color: #555;
   border: 1px solid #555;
-  border-radius: 5px 5px 0 0; }
+  border-style: solid;
+  border-color: darkgrey;
+  border-width: 1px 1px 0 1px;
+  border-radius: 5px 5px 0 0;
+  box-shadow: 0px 1px 1px 1px #555; }
 
 #stepline .led {
   display: inline-block;
@@ -148,10 +205,11 @@ input, button {
   height: 8px;
   margin: 10px auto;
   border: 1px solid #555;
+  background-color: #555;
   vertical-align: top; }
 
 #stepline .led-on {
-  background-color: green; }
+  background-color: limegreen; }
 
 #stepline label {
   height: 16px;
