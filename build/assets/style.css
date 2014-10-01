@@ -40,6 +40,8 @@ body {
     margin: 5px 0 0 5px;
     border: 1px solid #555;
     background-color: darkgrey; }
+    #padgrid button.previous {
+      background-color: green; }
 
 #stepline {
   position: absolute;
@@ -84,7 +86,7 @@ body {
   vertical-align: top; }
 
 #stepline .led-on {
-  background-color: red; }
+  background-color: green; }
 
 #stepline label {
   height: 16px;
@@ -98,7 +100,7 @@ body {
   vertical-align: top; }
 
 .flash, #padgrid button, #stepline .led {
-  transition: background-color 50ms ease-in; }
+  transition: background-color 60ms ease-out; }
 
 .flash--red {
   background-color: red !important; }

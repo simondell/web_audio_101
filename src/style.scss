@@ -54,6 +54,8 @@ $veryDarkGrey: #555;
 		border: 1px solid $veryDarkGrey;
 		background-color: darkgrey;
 		@extend .flash;
+
+		&.previous { background-color: green; }
 	}
 }
 
@@ -110,7 +112,7 @@ $veryDarkGrey: #555;
 		}
 
 		#stepline .led-on {
-			background-color: red;
+			background-color: green;
 		}
 
 		#stepline label {
@@ -128,7 +130,7 @@ $veryDarkGrey: #555;
 
 // flashing lights
 .flash {
-	transition: background-color 50ms ease-in;
+	transition: background-color 60ms ease-out;
 }
 
 .flash--red { background-color: red!important; } // abusing !important somewhat

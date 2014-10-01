@@ -257,17 +257,15 @@ function handlePadHit ( event ) {
 	nix( event );
 	drumObjects[ event.target.id ].bang();
 
-	if( !previousDrum || previousDrum.name !== event.target.id ) {
-		previousDrum = drumObjects[ event.target.id ];
+	if( previousDrum && previousDrum.name !== event.target.id ) {
+		$padgrid.find( '#' + previousDrum.name ).toggleClass( 'previous', false );
 	}
+	previousDrum = drumObjects[ event.target.id ];
+	$padgrid.find( '#' + event.target.id ).toggleClass( 'previous', true );
 
 	showDrumSteps();
 
-	// blur if clicked (but doesn't actually work)
-	if( /mouse/.test( event.type ) ) {
-		toggleMouseDownTrue();
-	}
-
+	if( /mouse/.test( event.type ) ) toggleMouseDownTrue();
 }
 
 
