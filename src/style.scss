@@ -128,7 +128,7 @@ $veryDarkGrey: #555;
 
 // flashing lights
 .flash {
-	transition: background-color 70ms ease-in;
+	transition: background-color 50ms ease-in;
 }
 
 .flash--red { background-color: red!important; } // abusing !important somewhat

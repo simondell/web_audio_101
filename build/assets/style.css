@@ -98,7 +98,7 @@ body {
   vertical-align: top; }
 
 .flash, #padgrid button, #stepline .led {
-  transition: background-color 70ms ease-in; }
+  transition: background-color 50ms ease-in; }
 
 .flash--red {
   background-color: red !important; }
