@@ -1,3 +1,4 @@
+/* colours */
 main, header, footer, nav, aside, section {
   display: block; }
 
@@ -9,9 +10,28 @@ html {
 body {
   width: 960px;
   margin: 0 auto;
-  font-family: Impact; }
+  font-family: Impact, Avenir;
+  font-weight: bold; }
 
-/* colours */
+h1 {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 278px;
+  padding: 0 0 5px;
+  margin: 0;
+  border-bottom: 1px solid #555;
+  font-size: 40px;
+  line-height: 40px;
+  letter-spacing: 2px;
+  font-style: italic;
+  text-align: right; }
+
+input, button {
+  -webkit-appearance: none;
+  padding: 0;
+  margin: 0; }
+
 /* machine sections */
 .eightiesOutline, #machine, #padgrid, #stepline {
   border: 1px solid darkgrey;
@@ -42,6 +62,50 @@ body {
     background-color: darkgrey; }
     #padgrid button.previous {
       background-color: green; }
+
+#sequencer--controls {
+  position: absolute;
+  right: 23px;
+  bottom: 128px;
+  width: 278px;
+  padding: 5px 0;
+  text-align: right; }
+  #sequencer--controls * {
+    vertical-align: middle; }
+  #sequencer--controls > * {
+    margin-left: 10px; }
+  #sequencer--controls button {
+    height: 50px;
+    width: 50px;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 5px; }
+
+#tempo {
+  display: inline-block;
+  width: 60px;
+  height: 50px;
+  padding: 0 5px;
+  font-size: 40px;
+  text-align: right;
+  line-height: 50px;
+  background-color: black;
+  color: green; }
+
+#rwnd {
+  border-color: orange;
+  background-color: orange !important;
+  color: #555; }
+
+#play {
+  border-color: green;
+  background-color: green !important;
+  color: white; }
+
+#stop {
+  border-color: red;
+  background-color: red !important;
+  color: white; }
 
 #stepline {
   position: absolute;
@@ -107,3 +171,6 @@ body {
 
 .flash--orange {
   background-color: orange !important; }
+
+.flash--darkgrey {
+  background-color: #555 !important; }

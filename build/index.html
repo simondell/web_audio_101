@@ -4,12 +4,15 @@
 <head>
 	<meta charset="UTF-8" />
 	<title>Web Audio 101</title>
-	<link rel="stylesheet" href="assets/style.css" />
+	<link rel="stylesheet" href="assets/scss/font-awesome.css" />
+	<link rel="stylesheet" href="assets/scss/style.css" />
 </head>
 
 <body>
 
+
 		<main id="machine">
+			<h1>WA-101</h1>
 
 			<section id="padgrid">
 				<button type="button" id="clap"></button
@@ -19,6 +22,14 @@
 				><button type="button" id="mtm"></button
 				><button type="button" id="rimsh"></button
 				><button type="button" id="tambo"></button>
+			</section>
+
+			<section id="sequencer--controls">
+				<div id="tempoCtrl"><span id="notch"></span></div>
+				<div id="tempo">107</div>
+				<button type="button" id="rwnd" class="fa fa-2x fa-fast-backward"></button
+				><button type="button" id="play" class="fa fa-2x fa-play"></button
+				><button type="button" id="stop" class="fa fa-2x fa-stop"></button>
 			</section>
 
 			<section id="stepline">

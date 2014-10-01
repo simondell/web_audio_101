@@ -1,3 +1,6 @@
+/* colours */
+$veryDarkGrey: #555;
+
 main, header, footer, nav, aside, section {
 	display: block;
 }
@@ -11,15 +14,33 @@ html {
 body {
 	width: 960px;
 	margin: 0 auto;
-	font-family: Impact;
+	font-family: Impact, Avenir;
+	font-weight: bold;
 }
 
-/* colours */
-$veryDarkGrey: #555;
+h1 {
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	width: 278px;
+	padding: 0 0 5px;
+	margin: 0;
+	border-bottom: 1px solid $veryDarkGrey;
+	font-size: 40px;
+	line-height: 40px;
+	letter-spacing: 2px;
+	font-style: italic;
+	text-align: right;
+}
+
+input, button {
+	-webkit-appearance: none;
+	padding: 0;
+	margin: 0;
+}
 
 /* machine sections */
 .eightiesOutline {
-// #machine, #padgrid, #stepline {
 	border: 1px solid darkgrey;
 	border-radius: 5px;
 	background-color: white;
@@ -59,6 +80,61 @@ $veryDarkGrey: #555;
 	}
 }
 
+
+$seqCtrlDim: 50px;
+
+#sequencer--controls {
+	position: absolute;
+	right: 23px;
+	bottom: 128px;
+	width: 278px;
+	padding: 5px 0;
+	text-align: right;
+
+	* { vertical-align: middle; }
+
+	> * {
+		margin-left: 10px;
+	}
+
+	button {
+		height: $seqCtrlDim;
+		width: $seqCtrlDim;
+		border-width: 1px;
+		border-style: solid;
+		border-radius: 5px;
+	}
+}
+
+	#tempo {
+		display: inline-block;
+		width: 2 * $seqCtrlDim - 40px;
+		height: $seqCtrlDim;
+		padding: 0 5px;
+		font-size: 40px;
+		text-align: right;
+		line-height: $seqCtrlDim;
+		background-color: black;
+		color: green;
+	}
+
+	#rwnd {
+		border-color: orange;
+		background-color: orange!important;
+		color: $veryDarkGrey;
+	}
+
+	#play {
+		border-color: green;
+		background-color: green!important;
+		color: white;
+	}
+
+	#stop {
+		border-color: red;
+		background-color: red!important;
+		color: white;
+	}
 
 
 #stepline {
@@ -135,3 +211,4 @@ $veryDarkGrey: #555;
 
 .flash--red { background-color: red!important; } // abusing !important somewhat
 .flash--orange { background-color: orange!important; } // abusing !important somewhat
+.flash--darkgrey { background-color: $veryDarkGrey!important; } // abusing !important somewhat

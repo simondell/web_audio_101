@@ -15,7 +15,7 @@ var src    = 'src/';
 var markup = src + 'index.html';
 var js     = src + '*.js';
 var vendor = src + 'vendor/*.js';
-var scss   = src + '*.scss';
+var scss   = src + '**/*.scss';
 
 var dest   = 'build/';
 var assets = dest + 'assets/'
