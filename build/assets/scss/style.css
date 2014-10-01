@@ -1,0 +1,180 @@
+/* colours */
+main, header, footer, nav, aside, section {
+  display: block; }
+
+html {
+  font-size: 16px;
+  line-height: 20px;
+  background-color: #eee; }
+
+body {
+  width: 960px;
+  margin: 0 auto;
+  font-family: Impact, "HelveticaNeue-CondensedBlack";
+  font-weight: bold; }
+
+h1 {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 278px;
+  padding: 0 0 5px;
+  margin: 0;
+  border-bottom: 1px solid #555;
+  font-size: 40px;
+  line-height: 40px;
+  letter-spacing: 2px;
+  font-style: italic;
+  text-align: right; }
+
+input, button {
+  -webkit-appearance: none;
+  padding: 0; }
+
+/* machine sections */
+.eightiesOutline, #machine, #padgrid, #stepline {
+  border: 1px solid darkgrey;
+  border-radius: 5px;
+  background-color: white; }
+
+#machine {
+  position: relative;
+  width: 626px;
+  height: 440px;
+  margin: 60px auto; }
+
+#padgrid, #stepline {
+  position: absolute;
+  left: 20px;
+  border-radius: 5px; }
+
+#padgrid {
+  top: 20px;
+  width: 285px;
+  height: 285px; }
+  #padgrid button {
+    display: inline-block;
+    width: 65px;
+    height: 65px;
+    margin: 5px 0 0 5px;
+    border: 1px solid #555;
+    background-color: darkgrey; }
+    #padgrid button.previous {
+      background-color: green; }
+
+#sequencer--controls {
+  position: absolute;
+  right: 23px;
+  bottom: 128px;
+  width: 278px;
+  padding: 5px 0;
+  text-align: right; }
+  #sequencer--controls * {
+    vertical-align: middle; }
+  #sequencer--controls > * {
+    margin-left: 10px; }
+  #sequencer--controls button {
+    height: 50px;
+    width: 50px;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 5px; }
+
+#tempo {
+  display: inline-block;
+  width: 60px;
+  height: 50px;
+  padding: 0 5px;
+  font-family: monospace;
+  font-size: 36px;
+  text-align: center;
+  letter-spacing: -2px;
+  line-height: 50px;
+  background-color: black;
+  color: green; }
+
+#rwnd {
+  border-color: darkorange;
+  background-color: darkorange;
+  color: #555; }
+
+#play {
+  border-color: darkgreen;
+  background-color: darkgreen;
+  color: white; }
+
+#stop {
+  border-color: darkred;
+  background-color: darkred;
+  color: white; }
+
+#stepline {
+  position: absolute;
+  bottom: 20px;
+  width: 576px;
+  height: 90px;
+  padding: 5px 0 5px 5px; }
+
+#stepline ol, #stepline li {
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+  height: 90px; }
+
+#stepline li {
+  position: relative;
+  width: 31px;
+  margin-right: 5px;
+  list-style: none;
+  text-align: center; }
+
+#stepline button, #stepline label {
+  position: absolute;
+  left: 0;
+  width: 100%; }
+
+#stepline button {
+  box-sizing: border-box;
+  height: 72px;
+  line-height: 72px;
+  background-color: white;
+  color: #555;
+  border: 1px solid #555;
+  border-radius: 5px 5px 0 0; }
+
+#stepline .led {
+  display: inline-block;
+  width: 16px;
+  height: 8px;
+  margin: 10px auto;
+  border: 1px solid #555;
+  vertical-align: top; }
+
+#stepline .led-on {
+  background-color: green; }
+
+#stepline label {
+  height: 16px;
+  line-height: 16px;
+  bottom: 0;
+  background-color: #555;
+  color: white;
+  border-radius: 0 0 5px 5px;
+  font-size: 0.8rem;
+  font-weight: 100;
+  vertical-align: top; }
+
+.flash, #padgrid button, #sequencer--controls button, #stepline .led {
+  transition: background-color 50ms ease-out; }
+
+.flash--red {
+  background-color: red !important; }
+
+.flash--green {
+  background-color: lightgreen !important; }
+
+.flash--orange {
+  background-color: orange !important; }
+
+.flash--darkgrey {
+  background-color: #555 !important; }

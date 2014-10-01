@@ -1,0 +1,218 @@
+/* colours */
+$veryDarkGrey: #555;
+
+main, header, footer, nav, aside, section {
+	display: block;
+}
+
+html {
+	font-size: 16px;
+	line-height: 20px;
+	background-color: #eee;
+}
+
+body {
+	width: 960px;
+	margin: 0 auto;
+	font-family: Impact, "HelveticaNeue-CondensedBlack";
+	font-weight: bold;
+}
+
+h1 {
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	width: 278px;
+	padding: 0 0 5px;
+	margin: 0;
+	border-bottom: 1px solid $veryDarkGrey;
+	font-size: 40px;
+	line-height: 40px;
+	letter-spacing: 2px;
+	font-style: italic;
+	text-align: right;
+}
+
+input, button {
+	-webkit-appearance: none;
+	padding: 0;
+	margin:
+}
+
+/* machine sections */
+.eightiesOutline {
+	border: 1px solid darkgrey;
+	border-radius: 5px;
+	background-color: white;
+}
+
+#machine {
+	@extend .eightiesOutline;
+	position: relative;
+	width: 626px;
+	height: 440px;
+	margin: 60px auto;
+}
+
+#padgrid, #stepline {
+	@extend .eightiesOutline;
+	position: absolute;
+	left: 20px;
+	border-radius: 5px;
+}
+
+
+#padgrid {
+	top: 20px;
+	width: 285px;
+	height: 285px;
+
+	button {
+		display: inline-block;
+		width: 65px;
+		height: 65px;
+		margin: 5px 0 0 5px;
+		border: 1px solid $veryDarkGrey;
+		background-color: darkgrey;
+		@extend .flash;
+
+		&.previous { background-color: green; }
+	}
+}
+
+
+$seqCtrlDim: 50px;
+
+#sequencer--controls {
+	position: absolute;
+	right: 23px;
+	bottom: 128px;
+	width: 278px;
+	padding: 5px 0;
+	text-align: right;
+
+	* { vertical-align: middle; }
+
+	> * {
+		margin-left: 10px;
+	}
+
+	button {
+		height: $seqCtrlDim;
+		width: $seqCtrlDim;
+		border-width: 1px;
+		border-style: solid;
+		border-radius: 5px;
+		@extend .flash;
+	}
+}
+
+	#tempo {
+		display: inline-block;
+		width: 2 * $seqCtrlDim - 40px;
+		height: $seqCtrlDim;
+		padding: 0 5px;
+		font-family: monospace;
+		font-size: 36px;
+		text-align: center;
+		letter-spacing: -2px;
+		line-height: $seqCtrlDim;
+		background-color: black;
+		color: green;
+	}
+
+	#rwnd {
+		border-color: darkorange;
+		background-color: darkorange;
+		color: $veryDarkGrey;
+	}
+
+	#play {
+		border-color: darkgreen;
+		background-color: darkgreen;
+		color: white;
+	}
+
+	#stop {
+		border-color: darkred;
+		background-color: darkred;
+		color: white;
+	}
+
+
+#stepline {
+	position: absolute;
+	bottom: 20px;
+	width: 576px;
+	height: 90px;
+	padding: 5px 0 5px 5px;
+}
+
+	#stepline ol, #stepline li {
+		display: inline-block;
+		padding: 0;
+		margin: 0;
+		height: 90px;
+	}
+
+	#stepline li {
+		position: relative;
+		width: 31px;
+		margin-right: 5px;
+		list-style: none;
+		text-align: center;
+	}
+
+		#stepline button,
+		#stepline label {
+			position: absolute;
+			left: 0;
+			width: 100%;
+		}
+
+		#stepline button {
+			box-sizing: border-box;
+			height: 72px;
+			line-height: 72px;
+			background-color: white;
+			color: $veryDarkGrey;
+			border: 1px solid $veryDarkGrey;
+			border-radius: 5px 5px 0 0;
+		}
+
+		#stepline .led {
+			display: inline-block;
+			width: 16px;
+			height: 8px;
+			margin: 10px auto;
+			border: 1px solid $veryDarkGrey;
+			vertical-align: top;
+			@extend .flash;
+		}
+
+		#stepline .led-on {
+			background-color: green;
+		}
+
+		#stepline label {
+			height: 16px;
+			line-height: 16px;
+			bottom: 0;
+			background-color: $veryDarkGrey;
+			color: white;
+			border-radius: 0 0 5px 5px;
+			font-size: 0.8rem;
+			font-weight: 100;
+			vertical-align: top;
+		}
+
+
+// flashing lights
+.flash {
+	transition: background-color 50ms ease-out;
+}
+
+.flash--red { background-color: red!important; } // abusing !important somewhat
+.flash--green { background-color: lightgreen!important; } // abusing !important somewhat
+.flash--orange { background-color: orange!important; } // abusing !important somewhat
+.flash--darkgrey { background-color: $veryDarkGrey!important; } // abusing !important somewhat

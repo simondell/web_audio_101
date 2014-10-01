@@ -20,6 +20,18 @@ Eventually the built site will be hosted somewhere. For now, clone to a local co
 http://localhost:8080 or http://<your_ip>:8080
 
 
+## Contribute
+
+The app uses Gulp for automated linting, SASS compilation and for serving a test site. Clone the project and run `npm install` , as above. Then run
+
+`$ gulp`
+
+... to build the project, start the server and watch process. An changes to JS, SASS or HTML files will trigger a rebuild of scripts, styles or mark-up portions of the build. JS linting happens automatically, so once the main task is running, errors will show up in the command line log.
+
+Look through the tasks in the gulpfile for individual tasks, like one-off linting.
+
+Make changes in "src/". The project will build to "build/", and that's root directory used by the server.
+
 
 ## Dependancies
 

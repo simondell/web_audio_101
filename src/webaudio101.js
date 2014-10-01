@@ -26,8 +26,8 @@ Evented.prototype = {
 	constructor: Evented,
 	on: function ( eventName, callback ) { $(this).on( eventName, callback ); return this; },
 	off: function ( eventName, callback ) { $(this).off( eventName, callback ); return this; },
-	trigger: function ( eventName, callback ) { $(this).trigger( eventName ); return this; }
-}
+	trigger: function ( eventName, args ) { $(this).trigger( eventName, args ); return this; }
+};
 
 
 
@@ -35,51 +35,16 @@ Evented.prototype = {
 // **********************************************
 //
 // The 'synth' section
-// drum sounds, channel to play them through, loader to load them etc
+// Drum sounds
+// (The loader is now part of the Drum object, and the context/channel to play
+//  through is defined below in the 'bootstrap' section because that stuff is more
+//  like app code or a main(). Other sound manipulation code may appear here later)
 //
 // **********************************************
 
 
-var context = new AudioContext();
-
-var matchDrumID = /(?:\/707)(\w+)(?:\.)/i;
-
-function loadSound( soundUrl ) {
-	var request = new XMLHttpRequest();
-	request.responseType = 'arraybuffer';
-
-	// Decode asynchronously
-	request.onload = function handleLoadSound ( event ) {
-		if( event.type !== 'load' ) return;
-		var xhr = event.target;
-		var id = matchDrumID.exec( soundUrl )[1].toLowerCase();
-
-		context.decodeAudioData( xhr.response, function(buffer) {
-			drums[ id ].buffer = buffer;
-			bang( drums[ id ] );
-		});
-
-		matchDrumID.lastIndex = 0;
-	};
-
-	request.open('GET', soundUrl, true);
-	request.send();
-}
-
-
-function bang( drum ) {
-	var source = context.createBufferSource(); // creates a sound source
-
-	source.buffer = drum.buffer;               // tell the source which sound to play
-	source.connect(context.destination);       // connect the source to the context's destination (the speakers)
-	source.start(0);                           // play the source now
-}
-
-
-
-
 /**
- * @class Drum
+ * @type Drum
  * @extends Evented
  * handles loading & decoding samples, and attaching to the audio graph
  */
@@ -100,7 +65,6 @@ function Drum ( path, context ) {
 
 			context.decodeAudioData( xhr.response, function(buffer) {
 				drum.buffer = buffer;
-				drum.bang();
 			});
 
 		};
@@ -120,26 +84,7 @@ Drum.prototype.bang = function bang () {
 	node.start( 0 );
 
 	this.trigger('bang');
-}
-
-
-// list sounds, then load and play them
-var drums = {
-	'clap'  : { grid: 1, path: 'assets/707/707CLAP.WAV', buffer: undefined },
-	'cowbl' : { grid: 2, path: 'assets/707/707COWBL.WAV', buffer: undefined },
-	'htm'   : { grid: 3, path: 'assets/707/707HTM.WAV', buffer: undefined },
-	'ltm'   : { grid: 4, path: 'assets/707/707LTM.WAV', buffer: undefined },
-	'mtm'   : { grid: 5, path: 'assets/707/707MTM.WAV', buffer: undefined },
-	'rimsh' : { grid: 6, path: 'assets/707/707RIMSH.WAV', buffer: undefined },
-	'tambo' : { grid: 7, path: 'assets/707/707TAMBO.WAV', buffer: undefined }
 };
-
-var drumObjects = {};
-
-for( drum in drums ) { if( drums.hasOwnProperty( drum ) ){
-	// loadSound( drums[drum].path );
-	drumObjects[ drum ] = new Drum( drums[drum].path, context );
-}}
 
 
 
@@ -151,67 +96,142 @@ for( drum in drums ) { if( drums.hasOwnProperty( drum ) ){
 //
 // **********************************************
 
-var sequence = [];
-var seqMaxLen = 16;
-var currentStep = 0;
-var nextTimer; 	// will hold the timeout id for the next step, so the sequencer can be stopped.
-var playing = false;
-var tempo = 107;
-var division = 4;	// as in 4 1/16th-notes per beat.
-var currentDrum;
+/**
+ * @type Sequencer
+ * @extends Evented
+ * handles the sequence
+ */
+function Sequencer () {
+	this.sequence = [];
+	this.seqMaxLen = 16;
+	this.currentStep = 0;
+	this.nextTimer = null; 	// will hold the timeout id for the next step, so the sequencer can be stopped.
+	this.playing = false;
+	this.tempo = 107;
+	this.division = 4;	// as in 4 1/16th-notes per beat.
 
-// a default sequence
+	var count = this.seqMaxLen;
+	while( count-- ) this.sequence.push( [] );
+}
+
+Sequencer.prototype = new Evented();
+Sequencer.prototype.constructor = Sequencer;
+
+Sequencer.prototype.start = function start () {
+	this.playing = true;
+	this.interval = (60 / (this.tempo * this.division)) * 1000;
+	this.playStep();
+};
+
+Sequencer.prototype.stop = function stop () {
+	this.playing = false;
+	clearTimeout( this.nextTimer );
+};
+
+Sequencer.prototype.playStep = function playStep () {
+	var seqr = this;
+	var stepDrums = this.sequence[ this.currentStep ];
+	var drumCount = stepDrums.length;
+	var boundPlayStep = $.proxy( seqr.playStep, seqr );
+
+	this.trigger('playStep', this.currentStep );
+
+	while( drumCount-- ) {
+		stepDrums[ drumCount ].bang();
+	}
+
+	this.currentStep = ++this.currentStep % this.seqMaxLen;
+
+	if( this.playing ) {
+		this.nextTimer = setTimeout( boundPlayStep, seqr.interval );
+	}
+};
+
+Sequencer.prototype.setStep = function setStep ( stepId, drum ) {
+	var step = this.sequence[ stepId ];
+	var drumPosition = $.inArray( drum, step );
+
+	// if the drum is already in the step array, remove it
+	if( drumPosition > -1 ) {	step.splice( drumPosition, 1 ); }
+	// otherwise, add it
+	else if( drum ) step.push( drum );
+};
+
+
+
+// **********************************************
 //
-sequence.push(['tambo', 'mtm', 'cowbl']);
-sequence.push([]);
-sequence.push(['tambo']);
-sequence.push([]);
-sequence.push(['tambo', 'clap']);
-sequence.push([]);
-sequence.push(['tambo', 'mtm']);
-sequence.push([]);
-sequence.push(['tambo']);
-sequence.push(['ltm']);
-sequence.push(['tambo', 'mtm']);
-sequence.push(['tambo']);
-sequence.push(['tambo', 'clap']);
-sequence.push([]);
-sequence.push(['tambo']);
-sequence.push(['rimsh']);
+// bootstrap - start the app
+//
+// **********************************************
+
+// app-level objects, collections etc
+var drumObjects = {};
+var sequencer = new Sequencer();
+var context = new AudioContext();
+var previousDrum = null;
+
+// cached $(elements)
+var $document = $(document);
+var $padgrid = $('#padgrid');
+var $pads = $padgrid.find('button');
+var $stepline = $('#stepline');
+var $stepButtons = $stepline.find('button');
+var $controls = $('#sequencer--controls');
+
+// app-level flags
+var mousedown = false;
+
+// Set up the app.
+// This didn't need to be within an IIFE: plain old imperative code would have worked.
+// The wrapping in an IIFE hints at how the code could be modularised later. The same applies to the
+//  'controller' functions, further down the file.
+(function bootstrap () {
+	var defaultSequence = [];
+	defaultSequence.push(['tambo', 'mtm', 'cowbl']);
+	defaultSequence.push([]);
+	defaultSequence.push(['tambo']);
+	defaultSequence.push([]);
+	defaultSequence.push(['tambo', 'clap', 'cowbl']);
+	defaultSequence.push([]);
+	defaultSequence.push(['tambo', 'mtm']);
+	defaultSequence.push([]);
+	defaultSequence.push(['tambo']);
+	defaultSequence.push(['ltm']);
+	defaultSequence.push(['tambo', 'mtm']);
+	defaultSequence.push(['tambo']);
+	defaultSequence.push(['tambo', 'clap']);
+	defaultSequence.push([]);
+	defaultSequence.push(['tambo']);
+	defaultSequence.push(['rimsh']);
 
 
-function playStep ( stepIndex ) {
-	var hits = sequence[ stepIndex ];
-	var hitCount = hits.length;
+	// list sounds, then load and play them
+	var drumPaths = {
+		'clap'  : 'assets/707/707CLAP.WAV',
+		'cowbl' : 'assets/707/707COWBL.WAV',
+		'htm'   : 'assets/707/707HTM.WAV',
+		'ltm'   : 'assets/707/707LTM.WAV',
+		'mtm'   : 'assets/707/707MTM.WAV',
+		'rimsh' : 'assets/707/707RIMSH.WAV',
+		'tambo' : 'assets/707/707TAMBO.WAV'
+	};
 
-	currentStep = ++currentStep % seqMaxLen;
-
-	while( hitCount-- ) {
-		// bang( drums[ hits[ hitCount ] ] );
-		drumObjects[ hits[ hitCount ] ].bang();
-	}
-
-	if( playing ) {
-		nextTimer = setTimeout( playStep, interval, currentStep );
-	}
-}
+	// set up the Drum objects in the drum collection
+	for( var drum in drumPaths ) { if( drumPaths.hasOwnProperty( drum ) ){
+		// loadSound( drums[drum].path );
+		drumObjects[ drum ] = new Drum( drumPaths[ drum ], context );
+	}}
 
 
-function toggleStartStop () {
-	if( playing ) {
-		playing = false;
-		clearTimeout( nextTimer );
-	} else {
-		playing = true;
-		startSequence();
-	}
-}
+	// 'load' the default sequence into the sequencer
+	defaultSequence.forEach( function ( step, index ) {
+		step.forEach( function ( stepDrum ) {
+			sequencer.setStep( index, drumObjects[ stepDrum ] );
+		});
+	});
 
-function startSequence () {
-	interval = (60 / (tempo * division)) * 1000;
-	playStep( currentStep );
-}
-
+})();
 
 
 
@@ -222,64 +242,165 @@ function startSequence () {
 //
 // **********************************************
 
-var mousedown = false;
-var $pads;	// will be a $set of buttons for use as drum pads
 
+// event handlers
+//
 function handleKeys ( event ) {
 	switch( event.which ) {
 	case 32:
-		toggleStartStop();
+		if( sequencer.playing ) sequencer.stop();
+		else sequencer.start();
 		break;
  	}
 }
 
+
 function handlePadHit ( event ) {
-	event.preventDefault();
-	event.stopImmediatePropagation();
-	// event.stopPropagation();
-	// bang( drums[ event.target.id ] );
+	nix( event );
 	drumObjects[ event.target.id ].bang();
 
-	// blur if clicked (but doesn't actually work)
-	if( /mouse/.test( event.type ) ) event.target.blur();
+	if( previousDrum && previousDrum.name !== event.target.id ) {
+		$padgrid.find( '#' + previousDrum.name ).toggleClass( 'previous', false );
+	}
+	previousDrum = drumObjects[ event.target.id ];
+	$padgrid.find( '#' + event.target.id ).toggleClass( 'previous', true );
+
+	showDrumSteps();
+
+	if( /mouse/.test( event.type ) ) toggleMouseDownTrue();
+}
+
+
+function handleControls ( event ) {
+	nix( event );
+
+	switch( event.target.id ) {
+	case "rwnd":
+		flash( event.target, 'orange' );
+		sequencer.currentStep = 0;
+		break;
+	case "play":
+		if(sequencer.playing) return;
+		flash( event.target, 'green' );
+		sequencer.start();
+		break;
+	case "stop":
+		flash( event.target, 'red' );
+		sequencer.stop();
+		break;
+	}
 }
 
 
 
-(function padController () {
-	var $document = $(document);
-	var $padgrid = $('#padgrid');
-	$pads = $padgrid.find('button');
+function handleStepTap () {
+	var stepId = parseInt( this.id.substr(4), 10 );
+	nix( event );
+	if( !previousDrum ) return;
+	flash( this, 'darkgrey');
+	sequencer.setStep( stepId, previousDrum );
+	showDrumSteps();
+}
 
+
+function handleStep ( event, stepId ) {
+	var stepButton = $stepButtons.eq( stepId );
+	flash( stepButton.find('span'), 'orange' );
+	if( stepId % 4 === 0 ) flash( $controls.find('#play'), 'green' );
+}
+
+
+
+
+// helper functions
+// (usually called within a handler, but sometimes called AS a handler)
+//
+function nix ( event ) {
+	event.preventDefault();
+	event.stopImmediatePropagation();
+	event.target.blur();
+}
+
+
+function flash ( elem, colour ) {
+	var $elem = $( elem );
+	var flashClass = 'flash--' + colour;
+	$elem.addClass( flashClass );
+	$elem.one( transitionEnd, function () { $elem.removeClass( flashClass ); });
+}
+
+
+function toggleMouseDownTrue () { mousedown = true; }
+
+
+function toggleMouseDownFalse () { mousedown = false; }
+
+
+function showDrumSteps () {
+	var drumSteps = sequencer.sequence.reduce( filterForLastDrum, [] );
+
+	$stepButtons.each( function turnOffLED ( index, button ) {
+		if( drumSteps[0] === index ) {
+			$(button).find('.led').toggleClass('led-on', true );
+			drumSteps.shift();
+		} else {
+			$(button).find('.led').toggleClass('led-on', false );
+		}
+	});
+}
+
+// callback for [].filter which
+function filterForLastDrum ( accum, currentStepDrums, index ) {
+	// current === stepDrums i.e. an array of drums at step[ index ]
+	if( currentStepDrums.some( findDrum ) ) accum.push( index );
+	return accum;
+}
+
+// callback for [].some, returning true if the passed-in drum matches previousDrum
+function findDrum ( inspected ) {
+	return inspected.name === previousDrum.name;
+}
+
+
+//
+// 'controllers'
+//
+
+// sets up bindings between the 'drum pad' buttons and the drums and sequencer
+(function padController () {
 	// Each pad 'listens' to its associated drum for 'bang' events
 	//  and flashes when it hears one.
 	$pads.each( function setDrumEvents ( index, pad ){
 		var $pad = $(pad);
 		drumObjects[ pad.id ].on( 'bang', function onBang ( /*event*/ ){
-console.log('bangbang', pad.id );
-			$pad.addClass( 'struck' );
-			$pad.one( transitionEnd, function (){ console.log('end'); $pad.removeClass( 'struck' ); });
+			flash( pad, 'red' );
 		});
 	});
 
 	// toggle mousedown flag, used for dragging an 'active" mouse over machine controls
-	$document.on('mousedown', function toggleMouseDownTrue () { mousedown = true; } );
-	$document.on('mouseup', function toggleMouseDownFalse () { mousedown = false; } );
+	$document.on('mousedown', toggleMouseDownTrue );
+	$document.on('mouseup', toggleMouseDownFalse );
 
 	// delegate drum pad taps to padgrid
-	$padgrid.on('touchstart', 'button', handlePadHit );
-	$padgrid.on('mousedown', 'button', handlePadHit );
 	$padgrid.on('mouseenter', 'button', function ( event ) {
 		if( mousedown ) { handlePadHit( event ); }
 	});
+	$padgrid.on('mousedown touchstart', 'button', handlePadHit );
 })();
+
 
 (function sequencerController () {
+	// show tempo
+	$controls.find('#tempo').text( sequencer.tempo );
+
+	// DOM events
 	$(document).on('keydown', handleKeys );
+	$stepline.on('mousedown touchstart', 'button', handleStepTap );
+	$controls.on('mousedown touchstart', 'button', handleControls );
 
+	// internal events
+	sequencer.on( 'playStep', handleStep );
 })();
-
-
 
 
 }(window, $));
