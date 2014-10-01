@@ -43,6 +43,11 @@ h1 {
 	font-style: italic;
 }
 
+a {
+	text-decoration: none;
+	color: limegreen;
+}
+
 input, button {
 	-webkit-appearance: none;
 	padding: 0;
@@ -131,6 +136,8 @@ $seqCtrlY: 40px;
 		border-left-width: 0px;
 		border-style: solid;
 		border-radius: 2px;
+		text-align: center;
+		font-size: 1.5rem;
 		@extend .flash;
 	}
 }
