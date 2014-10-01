@@ -72,6 +72,9 @@ Draggable.prototype = {
 		nix(event);
 		this.deltaX = event.pageX - this.startX;
 		this.deltaY = event.pageY - this.startY;
+		this.startX = event.pageX;
+		this.startY = event.pageY;
+
 		if( this.ondrag ) this.ondrag(this);
 	},
 
@@ -103,11 +106,12 @@ Draggable.prototype = {
  * @extends Evented
  * handles loading & decoding samples, and attaching to the audio graph
  */
-function Drum ( path, context ) {
+function Drum ( name, path, context ) {
 	var drum = this;
 	this.path = path;
 	this.context = context;
-	this.name = /(?:\/707)(\w+)(?:\.)/i.exec( path )[1].toLowerCase();
+	// this.name = /(?:\/707)(\w+)(?:\.)/i.exec( path )[1].toLowerCase();
+	this.name = name;
 
 	(function loadSound() {
 		var request = new XMLHttpRequest();
@@ -244,18 +248,18 @@ var mousedown = false;
 //  'controller' functions, further down the file.
 (function bootstrap () {
 	var defaultSequence = [];
-	defaultSequence.push(['tambo', 'mtm', 'cowbl']);
+	defaultSequence.push(['kick', 'tambo', 'mtm', 'cowbl']);
 	defaultSequence.push([]);
 	defaultSequence.push(['tambo']);
 	defaultSequence.push([]);
-	defaultSequence.push(['tambo', 'clap', 'cowbl']);
+	defaultSequence.push(['tambo', 'clap', 'cowbl', 'pop' ]);
 	defaultSequence.push([]);
-	defaultSequence.push(['tambo', 'mtm']);
+	defaultSequence.push(['snare', 'tambo', 'mtm']);
 	defaultSequence.push([]);
 	defaultSequence.push(['tambo']);
 	defaultSequence.push(['ltm']);
 	defaultSequence.push(['tambo', 'mtm']);
-	defaultSequence.push(['tambo']);
+	defaultSequence.push(['tambo', 'pop']);
 	defaultSequence.push(['tambo', 'clap']);
 	defaultSequence.push([]);
 	defaultSequence.push(['tambo']);
@@ -264,19 +268,28 @@ var mousedown = false;
 
 	// list sounds, then load and play them
 	var drumPaths = {
-		'clap'  : 'assets/707/707CLAP.WAV',
-		'cowbl' : 'assets/707/707COWBL.WAV',
-		'htm'   : 'assets/707/707HTM.WAV',
-		'ltm'   : 'assets/707/707LTM.WAV',
-		'mtm'   : 'assets/707/707MTM.WAV',
-		'rimsh' : 'assets/707/707RIMSH.WAV',
-		'tambo' : 'assets/707/707TAMBO.WAV'
+		'clap'    : 'assets/707/707CLAP.WAV',
+		'cowbl'   : 'assets/707/707COWBL.WAV',
+		'htm'     : 'assets/707/707HTM.WAV',
+		'ltm'     : 'assets/707/707LTM.WAV',
+		'mtm'     : 'assets/707/707MTM.WAV',
+		'rimsh'   : 'assets/707/707RIMSH.WAV',
+		'tambo'   : 'assets/707/707TAMBO.WAV',
+		'kick'    : 'assets/HR16/BDRM02.WAV',
+		'crash'   : 'assets/HR16/CRASH01.WAV',
+		'glass'   : 'assets/HR16/GLASBELL.WAV',
+		'pop'     : 'assets/HR16/POP01.WAV',
+		'ride'    : 'assets/HR16/RIDE01.WAV',
+		'scratch' : 'assets/HR16/SCRATCH1.WAV',
+		'sfx1'    : 'assets/HR16/SFX1-A.WAV',
+		'sfx2'    : 'assets/HR16/SFX1.WAV',
+		'snare'   : 'assets/HR16/SNARE01B.WAV'
 	};
 
 	// set up the Drum objects in the drum collection
 	for( var drum in drumPaths ) { if( drumPaths.hasOwnProperty( drum ) ){
 		// loadSound( drums[drum].path );
-		drumObjects[ drum ] = new Drum( drumPaths[ drum ], context );
+		drumObjects[ drum ] = new Drum( drum, drumPaths[ drum ], context );
 	}}
 
 
@@ -286,6 +299,9 @@ var mousedown = false;
 			sequencer.setStep( index, drumObjects[ stepDrum ] );
 		});
 	});
+
+	sequencer.tempo = 107;
+	turnTempoDial( 107 );
 
 })();
 
@@ -418,14 +434,22 @@ function findDrum ( inspected ) {
 
 
 function changeTempo ( knob ) {
-	var halfDeltaY = knob.deltaY / 6;
+	var halfDeltaY = knob.deltaY;
 	if( sequencer.tempo - halfDeltaY > 19 &&
 			sequencer.tempo - halfDeltaY < 241 ) {
 		sequencer.tempo = Math.floor( sequencer.tempo - halfDeltaY );
 	}
 	$controls.find('#tempo').text( sequencer.tempo );
+	turnTempoDial( sequencer.tempo );
 }
 
+
+function turnTempoDial( tempo ) {
+	var elem = $controls.find('#tempoCtrl')[0];
+	var cssProperty = (elem.style.transform)? 'transform': 'webkitTransform';
+	// $controls.find('#tempoCtrl').css({'transform': 'rotateZ(' + (tempo - 120) + 'deg)' })
+	elem.style[ cssProperty ] = 'rotateZ(' + (tempo - 120) + 'deg)';
+}
 
 
 
@@ -434,7 +458,8 @@ function changeTempo ( knob ) {
 //
 
 (function globalController () {
-	$(document).on('keydown', handleKeys );
+	$document.on('keydown', handleKeys );
+	$document.on('touchstart', function (e) { e.preventDefault(); });
 })();
 
 // sets up bindings between the 'drum pad' buttons and the drums and sequencer
