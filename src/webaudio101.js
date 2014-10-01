@@ -279,6 +279,7 @@ function handleStepTap () {
 	var stepId = parseInt( this.id.substr(4), 10 );
 	nix( event );
 	if( !previousDrum ) return;
+	flash( this, 'darkgrey')
 	sequencer.setStep( stepId, previousDrum );
 	showDrumSteps();
 }
