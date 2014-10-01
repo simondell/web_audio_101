@@ -4,6 +4,7 @@
 <head>
 	<meta charset="UTF-8" />
 	<title>Web Audio 101</title>
+	<meta name="viewport" content="width=640" />
 	<link rel="stylesheet" href="assets/scss/font-awesome.css" />
 	<link rel="stylesheet" href="assets/scss/style.css" />
 </head>
@@ -25,11 +26,16 @@
 			</section>
 
 			<section id="sequencer--controls">
-				<div id="tempoCtrl"><span id="notch"></span></div>
-				<div id="tempo"></div>
-				<button type="button" id="rwnd" class="fa fa-2x fa-fast-backward"></button
-				><button type="button" id="play" class="fa fa-2x fa-play"></button
-				><button type="button" id="stop" class="fa fa-2x fa-stop"></button>
+				<div class="sequencer--controls__group">
+					<div id="tempoCtrl"><span id="notch"></span></div>
+					<div id="tempo"></div>
+				</div>
+
+				<div class="sequencer--controls__group">
+					<button type="button" id="rwnd" class="fa fa-2x fa-fast-backward"></button
+					><button type="button" id="play" class="fa fa-2x fa-play"></button
+					><button type="button" id="stop" class="fa fa-2x fa-stop"></button>
+				</div>
 			</section>
 
 			<section id="stepline">

@@ -30,6 +30,61 @@ Evented.prototype = {
 };
 
 
+function Draggable ( elem, settings ) {
+	settings = settings || { onstart: null, ondrag: null, onend: null };
+	this.elem = elem;
+	this.$elem = $(elem);
+
+	this.dragging = false;
+	this.startX = this.startY = null;
+	this.deltaX = this.deltaY = null;
+
+	this.onstart = settings.onstart;
+	this.ondrag = settings.ondrag;
+	this.onend = settings.onend;
+
+	this.$elem.on('mousedown touchstart', $.proxy( this.start, this ) );
+
+	this.dragProxy = null;
+	this.endProxy = null;
+}
+Draggable.prototype = {
+	constructor: Draggable,
+
+	start: function start ( event ) {
+// console.log( 'start' );
+		nix(event);
+		this.dragging = true;
+		this.startX = event.pageX;
+		this.startY = event.pageY;
+
+		this.dragProxy = $.proxy( this.drag, this );
+		this.endProxy = $.proxy( this.end, this );
+		$document.on('mousemove touchmove', this.dragProxy );
+		$document.on('mouseup touchend', this.endProxy );
+
+		if( this.onstart ) this.onstart(this);
+	},
+
+	drag: function drag ( event ) {
+		if( !this.dragging ) return;
+// console.log( 'drag', arguments );
+		nix(event);
+		this.deltaX = event.pageX - this.startX;
+		this.deltaY = event.pageY - this.startY;
+		if( this.ondrag ) this.ondrag(this);
+	},
+
+	end: function end ( event ) {
+		nix(event);
+// console.log( 'end', arguments );
+		this.dragging = false;
+		$document.off('mousemove touchmove', this.dragProxy );
+		$document.off('mouseup touchend', this.endProxy );
+	}
+
+};
+
 
 
 // **********************************************
@@ -119,7 +174,6 @@ Sequencer.prototype.constructor = Sequencer;
 
 Sequencer.prototype.start = function start () {
 	this.playing = true;
-	this.interval = (60 / (this.tempo * this.division)) * 1000;
 	this.playStep();
 };
 
@@ -134,6 +188,8 @@ Sequencer.prototype.playStep = function playStep () {
 	var drumCount = stepDrums.length;
 	var boundPlayStep = $.proxy( seqr.playStep, seqr );
 
+	var interval = (60 / (this.tempo * this.division)) * 1000;
+
 	this.trigger('playStep', this.currentStep );
 
 	while( drumCount-- ) {
@@ -143,7 +199,7 @@ Sequencer.prototype.playStep = function playStep () {
 	this.currentStep = ++this.currentStep % this.seqMaxLen;
 
 	if( this.playing ) {
-		this.nextTimer = setTimeout( boundPlayStep, seqr.interval );
+		this.nextTimer = setTimeout( boundPlayStep, interval );
 	}
 };
 
@@ -351,7 +407,6 @@ function showDrumSteps () {
 
 // callback for [].filter which
 function filterForLastDrum ( accum, currentStepDrums, index ) {
-	// current === stepDrums i.e. an array of drums at step[ index ]
 	if( currentStepDrums.some( findDrum ) ) accum.push( index );
 	return accum;
 }
@@ -362,9 +417,25 @@ function findDrum ( inspected ) {
 }
 
 
+function changeTempo ( knob ) {
+	var halfDeltaY = knob.deltaY / 6;
+	if( sequencer.tempo - halfDeltaY > 19 &&
+			sequencer.tempo - halfDeltaY < 241 ) {
+		sequencer.tempo = Math.floor( sequencer.tempo - halfDeltaY );
+	}
+	$controls.find('#tempo').text( sequencer.tempo );
+}
+
+
+
+
 //
 // 'controllers'
 //
+
+(function globalController () {
+	$(document).on('keydown', handleKeys );
+})();
 
 // sets up bindings between the 'drum pad' buttons and the drums and sequencer
 (function padController () {
@@ -394,9 +465,13 @@ function findDrum ( inspected ) {
 	$controls.find('#tempo').text( sequencer.tempo );
 
 	// DOM events
-	$(document).on('keydown', handleKeys );
 	$stepline.on('mousedown touchstart', 'button', handleStepTap );
 	$controls.on('mousedown touchstart', 'button', handleControls );
+
+	// rotary connection
+	var tempoControl = new Draggable( $('#tempoCtrl'), {
+		ondrag: changeTempo
+	});
 
 	// internal events
 	sequencer.on( 'playStep', handleStep );

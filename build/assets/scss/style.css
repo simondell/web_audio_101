@@ -53,7 +53,7 @@ input, button {
   width: 285px;
   height: 285px; }
   #padgrid button {
-    display: inline-block;
+    float: left;
     width: 65px;
     height: 65px;
     margin: 5px 0 0 5px;
@@ -73,23 +73,46 @@ input, button {
     vertical-align: middle; }
   #sequencer--controls > * {
     margin-left: 10px; }
+  #sequencer--controls .sequencer--controls__group {
+    display: block;
+    margin-top: 10px;
+    height: 40px;
+    line-height: 40px; }
   #sequencer--controls button {
-    height: 50px;
+    height: 40px;
     width: 50px;
+    margin-left: 10px;
     border-width: 1px;
     border-style: solid;
-    border-radius: 5px; }
+    border-radius: 2px; }
+
+#tempoCtrl {
+  position: relative;
+  display: inline-block;
+  width: 31px;
+  height: 31px;
+  border: 1px solid #555;
+  border-radius: 50%; }
+
+#notch {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 16px;
+  background-color: #555; }
 
 #tempo {
   display: inline-block;
   width: 60px;
-  height: 50px;
+  height: 40px;
   padding: 0 5px;
+  margin-left: 15px;
   font-family: monospace;
   font-size: 36px;
   text-align: center;
   letter-spacing: -2px;
-  line-height: 50px;
+  line-height: 40px;
   background-color: black;
   color: green; }
 

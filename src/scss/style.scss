@@ -68,7 +68,7 @@ input, button {
 	height: 285px;
 
 	button {
-		display: inline-block;
+		float: left;
 		width: 65px;
 		height: 65px;
 		margin: 5px 0 0 5px;
@@ -81,7 +81,8 @@ input, button {
 }
 
 
-$seqCtrlDim: 50px;
+$seqCtrlX: 50px;
+$seqCtrlY: 40px;
 
 #sequencer--controls {
 	position: absolute;
@@ -97,26 +98,54 @@ $seqCtrlDim: 50px;
 		margin-left: 10px;
 	}
 
+	.sequencer--controls__group {
+		display: block;
+		margin-top: 10px;
+		height: $seqCtrlY;
+		line-height: $seqCtrlY;
+	}
+
 	button {
-		height: $seqCtrlDim;
-		width: $seqCtrlDim;
+		height: $seqCtrlY;
+		width: $seqCtrlX;
+		margin-left: 10px;
 		border-width: 1px;
 		border-style: solid;
-		border-radius: 5px;
+		border-radius: 2px;
 		@extend .flash;
 	}
 }
 
+	#tempoCtrl {
+		position: relative;
+		display: inline-block;
+		width: $seqCtrlY - 9px;
+		height: $seqCtrlY - 9px;
+		border: 1px solid $veryDarkGrey;
+		border-radius: 50%;
+		// transform: rotateZ(-90deg);
+	}
+
+		#notch {
+			position: absolute;
+			top: 0;
+			left: 50%;
+			width: 1px;
+			height: $seqCtrlY / 2.5;
+			background-color: $veryDarkGrey;
+		}
+
 	#tempo {
 		display: inline-block;
-		width: 2 * $seqCtrlDim - 40px;
-		height: $seqCtrlDim;
+		width: 2 * $seqCtrlX - 40px;
+		height: $seqCtrlY;
 		padding: 0 5px;
+		margin-left: 15px;
 		font-family: monospace;
 		font-size: 36px;
 		text-align: center;
 		letter-spacing: -2px;
-		line-height: $seqCtrlDim;
+		line-height: $seqCtrlY;
 		background-color: black;
 		color: green;
 	}
