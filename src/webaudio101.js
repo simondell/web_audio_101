@@ -132,6 +132,7 @@ Sequencer.prototype.playStep = function playStep () {
 	var seqr = this;
 	var stepDrums = this.sequence[ this.currentStep ];
 	var drumCount = stepDrums.length;
+	var boundPlayStep = $.proxy( seqr.playStep, seqr );
 
 	this.trigger('playStep', this.currentStep );
 
@@ -142,7 +143,7 @@ Sequencer.prototype.playStep = function playStep () {
 	this.currentStep = ++this.currentStep % this.seqMaxLen;
 
 	if( this.playing ) {
-		this.nextTimer = setTimeout( $.proxy( seqr.playStep, seqr ), seqr.interval );
+		this.nextTimer = setTimeout( boundPlayStep, seqr.interval );
 	}
 };
 
@@ -176,6 +177,7 @@ var $padgrid = $('#padgrid');
 var $pads = $padgrid.find('button');
 var $stepline = $('#stepline');
 var $stepButtons = $stepline.find('button');
+var $controls = $('#sequencer--controls');
 
 // app-level flags
 var mousedown = false;
@@ -269,20 +271,45 @@ function handlePadHit ( event ) {
 }
 
 
-function handleStep ( event, stepId ) {
-	var stepButton = $stepButtons.eq( stepId );
-	flash( stepButton.find('span'), 'orange' );
+function handleControls ( event ) {
+	nix( event );
+
+	switch( event.target.id ) {
+	case "rwnd":
+		flash( event.target, 'orange' );
+		sequencer.currentStep = 0;
+		break;
+	case "play":
+		if(sequencer.playing) return;
+		flash( event.target, 'green' );
+		sequencer.start();
+		break;
+	case "stop":
+		flash( event.target, 'red' );
+		sequencer.stop();
+		break;
+	}
 }
+
 
 
 function handleStepTap () {
 	var stepId = parseInt( this.id.substr(4), 10 );
 	nix( event );
 	if( !previousDrum ) return;
-	flash( this, 'darkgrey')
+	flash( this, 'darkgrey');
 	sequencer.setStep( stepId, previousDrum );
 	showDrumSteps();
 }
+
+
+function handleStep ( event, stepId ) {
+	var stepButton = $stepButtons.eq( stepId );
+	flash( stepButton.find('span'), 'orange' );
+	if( stepId % 4 === 0 ) flash( $controls.find('#play'), 'green' );
+}
+
+
 
 
 // helper functions
@@ -363,10 +390,16 @@ function findDrum ( inspected ) {
 
 
 (function sequencerController () {
+	// show tempo
+	$controls.find('#tempo').text( sequencer.tempo );
+
+	// DOM events
 	$(document).on('keydown', handleKeys );
 	$stepline.on('mousedown touchstart', 'button', handleStepTap );
+	$controls.on('mousedown touchstart', 'button', handleControls );
 
-	sequencer.on('playStep', handleStep );
+	// internal events
+	sequencer.on( 'playStep', handleStep );
 })();
 
 

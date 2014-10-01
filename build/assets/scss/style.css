@@ -10,7 +10,7 @@ html {
 body {
   width: 960px;
   margin: 0 auto;
-  font-family: Impact, Avenir;
+  font-family: Impact, "HelveticaNeue-CondensedBlack";
   font-weight: bold; }
 
 h1 {
@@ -29,8 +29,7 @@ h1 {
 
 input, button {
   -webkit-appearance: none;
-  padding: 0;
-  margin: 0; }
+  padding: 0; }
 
 /* machine sections */
 .eightiesOutline, #machine, #padgrid, #stepline {
@@ -86,25 +85,27 @@ input, button {
   width: 60px;
   height: 50px;
   padding: 0 5px;
-  font-size: 40px;
-  text-align: right;
+  font-family: monospace;
+  font-size: 36px;
+  text-align: center;
+  letter-spacing: -2px;
   line-height: 50px;
   background-color: black;
   color: green; }
 
 #rwnd {
-  border-color: orange;
-  background-color: orange !important;
+  border-color: darkorange;
+  background-color: darkorange;
   color: #555; }
 
 #play {
-  border-color: green;
-  background-color: green !important;
+  border-color: darkgreen;
+  background-color: darkgreen;
   color: white; }
 
 #stop {
-  border-color: red;
-  background-color: red !important;
+  border-color: darkred;
+  background-color: darkred;
   color: white; }
 
 #stepline {
@@ -163,11 +164,14 @@ input, button {
   font-weight: 100;
   vertical-align: top; }
 
-.flash, #padgrid button, #stepline .led {
-  transition: background-color 60ms ease-out; }
+.flash, #padgrid button, #sequencer--controls button, #stepline .led {
+  transition: background-color 50ms ease-out; }
 
 .flash--red {
   background-color: red !important; }
+
+.flash--green {
+  background-color: lightgreen !important; }
 
 .flash--orange {
   background-color: orange !important; }

@@ -14,7 +14,7 @@ html {
 body {
 	width: 960px;
 	margin: 0 auto;
-	font-family: Impact, Avenir;
+	font-family: Impact, "HelveticaNeue-CondensedBlack";
 	font-weight: bold;
 }
 
@@ -36,7 +36,7 @@ h1 {
 input, button {
 	-webkit-appearance: none;
 	padding: 0;
-	margin: 0;
+	margin:
 }
 
 /* machine sections */
@@ -103,6 +103,7 @@ $seqCtrlDim: 50px;
 		border-width: 1px;
 		border-style: solid;
 		border-radius: 5px;
+		@extend .flash;
 	}
 }
 
@@ -111,28 +112,30 @@ $seqCtrlDim: 50px;
 		width: 2 * $seqCtrlDim - 40px;
 		height: $seqCtrlDim;
 		padding: 0 5px;
-		font-size: 40px;
-		text-align: right;
+		font-family: monospace;
+		font-size: 36px;
+		text-align: center;
+		letter-spacing: -2px;
 		line-height: $seqCtrlDim;
 		background-color: black;
 		color: green;
 	}
 
 	#rwnd {
-		border-color: orange;
-		background-color: orange!important;
+		border-color: darkorange;
+		background-color: darkorange;
 		color: $veryDarkGrey;
 	}
 
 	#play {
-		border-color: green;
-		background-color: green!important;
+		border-color: darkgreen;
+		background-color: darkgreen;
 		color: white;
 	}
 
 	#stop {
-		border-color: red;
-		background-color: red!important;
+		border-color: darkred;
+		background-color: darkred;
 		color: white;
 	}
 
@@ -206,9 +209,10 @@ $seqCtrlDim: 50px;
 
 // flashing lights
 .flash {
-	transition: background-color 60ms ease-out;
+	transition: background-color 50ms ease-out;
 }
 
 .flash--red { background-color: red!important; } // abusing !important somewhat
+.flash--green { background-color: lightgreen!important; } // abusing !important somewhat
 .flash--orange { background-color: orange!important; } // abusing !important somewhat
 .flash--darkgrey { background-color: $veryDarkGrey!important; } // abusing !important somewhat
